@@ -1,0 +1,23 @@
+node_modules/
+test-results/
+playwright-report/
+
+# Internal agent tooling + plans: never published to the Pages branch.
+.opencode/
+
+# Author's own CV: it is the source for the portfolio copy, but the document
+# itself is intentionally kept out of the public repository and maintained
+# separately. Anchored to the root so a copy at any other depth is unaffected.
+/cv.md
+
+# Local Lighthouse runs can emit a Windows-style temp profile as a directory
+# name in the repo root on some setups; never ship it. Anchored to the root so
+# it cannot silently match a legitimate `C:*` path at any other depth.
+/C:*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

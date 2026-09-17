@@ -1,0 +1,598 @@
+/* ==========================================================================
+   components.css — Reusable UI components
+   Cascade position: 4 of 5 (fonts → tokens → base → components → sections)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Theme toggle
+   The icon is driven purely by CSS from the <html data-theme> attribute so it
+   is already correct on the very first paint (no JS-driven layout shift).
+   Dark active  → sun icon  (action: switch to light)
+   Light active → moon icon (action: switch to dark)
+   -------------------------------------------------------------------------- */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.theme-toggle__icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.theme-toggle__icon--sun {
+  display: none;
+}
+
+:root[data-theme='dark'] .theme-toggle__icon--sun {
+  display: block;
+}
+
+:root[data-theme='dark'] .theme-toggle__icon--moon {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Button
+   Atoms: .btn base + .btn--primary / .btn--ghost variants.
+   Driven only by semantic tokens so both themes stay correct; used for links
+   (<a>) and real buttons (<button>) alike, hence the shared reset.
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-block-size: 2.75rem; /* 44px minimum touch target */
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+.btn--primary:hover {
+  background-color: var(--accent-strong);
+  color: var(--accent-contrast);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Icon-only square action: same 44px touch target as the other atoms. The
+   accessible name lives on the element (aria-label) because there is no text. */
+.btn--icon {
+  inline-size: 2.75rem;
+  padding: 0;
+}
+
+.btn--icon svg {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+/* ==========================================================================
+   Shared components
+   Atoms and blocks below are self-contained and driven by tokens only:
+     - .card            (surface container)
+     - .tag / .tag-list (keyword chips)
+     - .timeline        (experience entries)
+     - .stack-card      (stack category group)
+     - .link-arrow      (inline CTA link with a trailing arrow)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Card
+   Generic surface container: hairline border + soft elevation.
+   -------------------------------------------------------------------------- */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Tag / tag-list
+   Small mono pills for keywords and stacks. The label uses --text-muted, which
+   keeps AA contrast in both themes; --accent only tints the fill/border so the
+   text contrast never depends on it.
+   -------------------------------------------------------------------------- */
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent-soft);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Timeline
+   Mobile: a single readable column with the rail on the left.
+   Wide (>= 60em): the rail moves to the centre and cards alternate sides.
+   The rail and nodes are decorative; the DOM stays a plain semantic <ol>.
+   -------------------------------------------------------------------------- */
+.timeline {
+  --timeline-node: 0.875rem;
+  --timeline-rail: 2px;
+  --timeline-gutter: 1.25rem;
+
+  position: relative;
+  display: grid;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Continuous rail, faded at both ends so it never looks cut off. */
+.timeline::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc((var(--timeline-gutter) - var(--timeline-rail)) / 2);
+  inline-size: var(--timeline-rail);
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--border) 3%,
+    var(--border) 97%,
+    transparent
+  );
+}
+
+.timeline__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--timeline-gutter) minmax(0, 1fr);
+  column-gap: var(--space-4);
+  align-items: start;
+}
+
+/* The node punches a hole in the rail via the section background. */
+.timeline__node {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+  inline-size: var(--timeline-node);
+  block-size: var(--timeline-node);
+  margin-block-start: 1.5rem; /* optical alignment with the card title */
+  border: var(--timeline-rail) solid var(--accent);
+  border-radius: 50%;
+  background-color: var(--bg);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+
+.timeline__card {
+  grid-column: 2;
+  grid-row: 1;
+  position: relative;
+  min-inline-size: 0;
+  padding: var(--space-6);
+  border-radius: var(--radius-md);
+  overflow-wrap: break-word;
+  transition: border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+/* Restrained accent glow on hover. */
+.timeline__card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.timeline__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-block-end: var(--space-4);
+}
+
+.timeline__role {
+  font-size: 1.125rem;
+}
+
+.timeline__company {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.timeline__dates {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.timeline__summary,
+.timeline__note {
+  color: var(--text-muted);
+}
+
+.timeline__duties {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  list-style: disc;
+  overflow-wrap: break-word;
+}
+
+.timeline__duties li::marker {
+  color: var(--accent);
+}
+
+.timeline__note {
+  margin-block-start: var(--space-4);
+  font-size: 0.9375rem;
+}
+
+.timeline__card .tag-list {
+  margin-block-start: var(--space-6);
+}
+
+/* Wide viewports: centre rail + alternating cards. */
+@media (min-width: 60em) {
+  .timeline {
+    gap: var(--space-12);
+  }
+
+  .timeline::before {
+    inset-inline-start: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline__item {
+    grid-template-columns: minmax(0, 1fr) var(--timeline-gutter) minmax(0, 1fr);
+    column-gap: var(--space-8);
+  }
+
+  .timeline__node {
+    grid-column: 2;
+  }
+
+  .timeline__card {
+    grid-column: 1;
+  }
+
+  .timeline__item:nth-child(even) .timeline__card {
+    grid-column: 3;
+  }
+
+  /* Decorative connector from each card to the central rail. */
+  .timeline__card::after {
+    content: '';
+    position: absolute;
+    inset-block-start: calc(var(--space-6) + var(--timeline-node) / 2);
+    inline-size: var(--space-8);
+    block-size: 1px;
+    background-color: var(--border);
+  }
+
+  .timeline__item:nth-child(odd) .timeline__card::after {
+    inset-inline-end: calc(-1 * var(--space-8));
+  }
+
+  .timeline__item:nth-child(even) .timeline__card::after {
+    inset-inline-start: calc(-1 * var(--space-8));
+  }
+}
+
+/* Motion is decorative: drop the hover transition entirely. */
+@media (prefers-reduced-motion: reduce) {
+  .timeline__card {
+    /* `!important` outranks base.css' universal reduced-motion reset, so the
+       duration resolves to a true 0s instead of 0.01ms. */
+    transition: none !important;
+  }
+
+  .timeline__card:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Stack card
+   A category group inside the "Stack" section: a small mono label plus the
+   chips for that category. Hover stays restrained (accent border + elevation).
+   -------------------------------------------------------------------------- */
+.stack-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  transition: border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.stack-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* The heading is a real <h3>; it is styled as a quiet mono label. */
+.stack-card__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.stack-card__title::before {
+  content: '';
+  flex: 0 0 auto;
+  inline-size: 1.5rem;
+  block-size: 2px;
+  border-radius: var(--radius-pill);
+  background-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Link arrow
+   Inline call-to-action link with a trailing arrow that nudges on hover.
+   -------------------------------------------------------------------------- */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.link-arrow:hover {
+  color: var(--accent-strong);
+  text-decoration: underline;
+}
+
+.link-arrow__icon {
+  flex: 0 0 auto;
+  inline-size: 1em;
+  block-size: 1em;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.link-arrow:hover .link-arrow__icon {
+  transform: translateX(0.25rem);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion for the new components
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .stack-card,
+  .link-arrow__icon {
+    transition: none !important;
+  }
+
+  .stack-card:hover {
+    transform: none;
+  }
+
+  .link-arrow:hover .link-arrow__icon {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation trigger
+   A 44px pill matching the theme toggle. Hidden by default: sections.css only
+   reveals it below 48em and only when the `.js` class is present, so without
+   JavaScript it never appears (the static nav fallback takes over instead).
+   The two pseudo-bars morph into a cross from the aria-expanded state.
+   -------------------------------------------------------------------------- */
+.nav-toggle {
+  display: none;
+  place-items: center;
+  flex: 0 0 auto;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.nav-toggle__icon {
+  position: relative;
+  inline-size: 1.125rem;
+  block-size: 2px;
+  border-radius: var(--radius-pill);
+  background-color: currentColor;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+.nav-toggle__icon::before,
+.nav-toggle__icon::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  block-size: 2px;
+  border-radius: var(--radius-pill);
+  background-color: currentColor;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.nav-toggle__icon::before {
+  top: -6px;
+}
+
+.nav-toggle__icon::after {
+  bottom: -6px;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__icon {
+  background-color: transparent;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__icon::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__icon::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* --------------------------------------------------------------------------
+   Mobile navigation backdrop
+   Decorative dim layer behind the off-canvas panel; aria-hidden in the markup
+   and shown only while `html.nav-open` is set by nav.js.
+   -------------------------------------------------------------------------- */
+.nav-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: rgba(10, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-base) var(--ease-out),
+    visibility 0s linear var(--dur-base);
+}
+
+html.nav-open .nav-backdrop {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-base) var(--ease-out), visibility 0s;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll lock
+   Only <body> is frozen: when the root element is visible its child's overflow
+   is propagated to the viewport, which locks scrolling while keeping
+   `position: sticky` on the header working. Freezing <html> as well would turn
+   it into a scroll container and break the sticky header. The reserved
+   scrollbar gap keeps the layout from shifting.
+   -------------------------------------------------------------------------- */
+html.nav-open body {
+  overflow: hidden;
+  padding-right: var(--scrollbar-gap, 0px);
+}
+
+/* --------------------------------------------------------------------------
+   Active navigation link (driven by the scroll-spy)
+   The underline keeps the state independent from the hover colour cue.
+   -------------------------------------------------------------------------- */
+.site-nav__link.is-active {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.35em;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll reveal
+   Opt-in via [data-reveal]; the pre-reveal state is gated behind `.js`, so
+   with JS disabled nothing is hidden. Only opacity + transform animate (no
+   layout impact), and reveal.js unobserves each element after the first
+   reveal, so the visible state is permanent.
+   -------------------------------------------------------------------------- */
+.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition: opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.js [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Reduced motion: the final state is applied immediately, no transition. */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none !important;
+  }
+
+  .nav-toggle,
+  .nav-toggle__icon,
+  .nav-toggle__icon::before,
+  .nav-toggle__icon::after,
+  .nav-backdrop {
+    transition: none !important;
+  }
+}

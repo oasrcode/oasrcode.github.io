@@ -1,0 +1,169 @@
+/* ==========================================================================
+   tokens.css — Reset, design tokens and theme definitions
+   Portfolio Aythami Santana Rodríguez
+   Cascade position: 2 of 5 (fonts → tokens → base → components → sections)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Minimal modern reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  /*
+   * Single source of truth for the sticky-header offset. Applies to every
+   * scroll-into-view operation (anchor jumps AND keyboard focus), so no target
+   * needs its own `scroll-margin-top`; having both would double the offset.
+   * sections.css raises --anchor-offset inside the no-JS mobile fallback, where
+   * the nav wraps and the header grows taller than --header-h.
+   */
+  scroll-padding-top: var(--anchor-offset);
+}
+
+body {
+  min-height: 100dvh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+ul[role='list'],
+ol[role='list'] {
+  list-style: none;
+  padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. Theme-independent tokens
+   -------------------------------------------------------------------------- */
+:root {
+  /* Brand — granate. Only the steps referenced by the semantic themes below
+     are kept: -700/-600/-500 drive light accents and focus, -200 is the
+     AA-safe accent for dark surfaces. */
+  --granate-700: #6e1423;
+  --granate-600: #8b1e2d;
+  --granate-500: #a4161a;
+  --granate-200: #ee5a64;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Motion */
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-slow: 500ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Typography */
+  --font-display: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Layout */
+  --container-max: 1120px;
+  --container-pad: clamp(1.25rem, 4vw, 2.5rem);
+  --header-h: 4.5rem;
+  /*
+   * Anchor-landing offset: sticky header + breathing room. The base value
+   * matches the JS header (--header-h); sections.css raises it only for the
+   * no-JS mobile fallback where the wrapped nav makes the header taller.
+   */
+  --anchor-offset: calc(var(--header-h) + var(--space-4));
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(10, 0, 0, 0.06), 0 1px 3px rgba(10, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px -12px rgba(10, 0, 0, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   3. Semantic — light theme (default)
+   -------------------------------------------------------------------------- */
+:root,
+:root[data-theme='light'] {
+  --bg: #faf7f5;
+  --surface: #ffffff;
+  --text: #1a1414;
+  --text-muted: #5c5252;
+  --border: #e7dedb;
+
+  --accent: var(--granate-600);
+  --accent-strong: var(--granate-700);
+  --accent-contrast: #ffffff;
+  --accent-soft: rgba(139, 30, 45, 0.08);
+  --focus-ring: var(--granate-500);
+
+  --header-bg: rgba(250, 247, 245, 0.82);
+
+  color-scheme: light;
+}
+
+/* --------------------------------------------------------------------------
+   4. Semantic — dark theme
+   -------------------------------------------------------------------------- */
+:root[data-theme='dark'] {
+  --bg: #0e0b0b;
+  --surface: #171212;
+  --text: #f5efef;
+  --text-muted: #a99e9e;
+  --border: #2a2222;
+
+  --accent: var(--granate-200);
+  --accent-strong: var(--granate-200);
+  /* #0e0b0b on #ee5a64 = 5.86:1 — AA for normal text (WCAG 1.4.3). */
+  --accent-contrast: #0e0b0b;
+  --accent-soft: rgba(238, 90, 100, 0.12);
+  --focus-ring: var(--granate-200);
+
+  --header-bg: rgba(14, 11, 11, 0.82);
+
+  color-scheme: dark;
+}

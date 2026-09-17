@@ -1,0 +1,697 @@
+/* ==========================================================================
+   sections.css — Page regions and per-section layout
+   Cascade position: 5 of 5 (fonts → tokens → base → components → sections)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Site header
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--header-h);
+}
+
+.site-header__brand {
+  margin-inline-end: auto;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-header__brand:hover {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Primary navigation
+   -------------------------------------------------------------------------- */
+.site-nav__list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+}
+
+.site-nav__link {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+.site-nav__link:hover {
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Hero
+   Full-viewport opening block. Vertical centring happens on the grid so the
+   content stays optically balanced regardless of how many lines the tagline
+   wraps to. Ambience is pure CSS (pseudo-elements) and reads correctly in both
+   themes because it is built from --accent-soft.
+   -------------------------------------------------------------------------- */
+.section--hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-content: center;
+  /* The header is sticky AND in flow, so it consumes --header-h at the top.
+     Filling the *remaining* viewport keeps header + hero at exactly one
+     screen height without the hero sliding behind the header, and keeps the
+     scroll cue on the first screen. */
+  min-height: calc(100vh - var(--header-h)); /* fallback without svh */
+  min-height: calc(100svh - var(--header-h));
+  padding-block: clamp(6rem, 14vw, 10rem) clamp(5rem, 12vw, 8rem);
+  overflow: hidden;
+}
+
+/* Layered burgundy ambience: a soft top halo plus a bottom-right glow blob.
+   Both live at z-index -1 inside the section's own stacking context, so they
+   never intercept pointer events and never cover the content. */
+.section--hero::before,
+.section--hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.section--hero::before {
+  inset: -25% -15% auto -25%;
+  block-size: 90%;
+  background-image: radial-gradient(
+      55% 65% at 18% 8%,
+      var(--accent-soft),
+      transparent 72%
+    ),
+    radial-gradient(45% 55% at 72% -5%, var(--accent-soft), transparent 74%);
+}
+
+.section--hero::after {
+  inset: auto -20% -35% auto;
+  inline-size: min(62rem, 95vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    var(--accent-soft),
+    transparent 62%
+  );
+}
+
+/* Hero composition ------------------------------------------------------- */
+.hero__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  max-width: 60rem;
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero__title {
+  max-width: 18ch;
+  font-size: clamp(2.5rem, 1.4rem + 6.5vw, 6rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.hero__location {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.hero__tagline {
+  max-width: 52ch;
+  color: var(--text-muted);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-block-start: var(--space-2);
+}
+
+/* Secondary contact group: icon-only actions tied to the primary CTA with a
+   quiet divider. `nowrap` keeps the three actions together when the actions
+   row wraps at narrow widths, so they never break across lines. */
+.hero__contact {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: var(--space-2);
+  margin-inline-start: var(--space-1);
+  padding-inline-start: var(--space-4);
+  border-inline-start: 1px solid var(--border);
+}
+
+.hero__icon {
+  flex: 0 0 auto;
+  inline-size: 1.125em;
+  block-size: 1.125em;
+}
+
+/* Decorative scroll cue -------------------------------------------------- */
+.hero__scroll {
+  position: absolute;
+  inset-block-end: var(--space-6);
+  inset-inline-start: 50%;
+  display: grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 3rem;
+  transform: translateX(-50%);
+}
+
+.hero__scroll-track {
+  position: relative;
+  inline-size: 1px;
+  block-size: 100%;
+  background-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--border) 35%,
+    var(--border) 65%,
+    transparent
+  );
+}
+
+.hero__scroll-track::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: 50%;
+  inset-block-start: 0;
+  inline-size: 0.3125rem;
+  block-size: 0.3125rem;
+  border-radius: 50%;
+  background-color: var(--accent);
+  transform: translateX(-50%);
+  animation: hero-scroll 2.4s var(--ease-out) infinite;
+}
+
+/* Entrance animation: fade + slight upward slide, staggered per element. */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-scroll {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 2.5rem);
+  }
+}
+
+.hero__inner > * {
+  animation: hero-rise var(--dur-slow) var(--ease-out) both;
+}
+
+.hero__inner > :nth-child(1) {
+  animation-delay: 80ms;
+}
+.hero__inner > :nth-child(2) {
+  animation-delay: 160ms;
+}
+.hero__inner > :nth-child(3) {
+  animation-delay: 240ms;
+}
+.hero__inner > :nth-child(4) {
+  animation-delay: 320ms;
+}
+.hero__inner > :nth-child(5) {
+  animation-delay: 400ms;
+}
+
+/* Motion is purely decorative: show the final state immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .hero__inner > * {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero__scroll-track::after {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   About
+   Biography column + an inset panel with the practice areas and the current
+   role. The panel inverts to --bg because the section itself is --surface.
+   -------------------------------------------------------------------------- */
+.about__layout {
+  display: grid;
+  gap: var(--space-8);
+  align-items: start;
+}
+
+.about__aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg);
+}
+
+.about__aside-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.about__currently {
+  padding-block-start: var(--space-4);
+  border-block-start: 1px solid var(--border);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.about__currently strong {
+  color: var(--text);
+}
+
+@media (min-width: 60em) {
+  .about__layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--space-12);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Experience
+   The timeline component lives in components.css; only the section-level
+   rhythm is set here.
+   -------------------------------------------------------------------------- */
+#experience .timeline {
+  margin-block-start: var(--space-8);
+}
+
+/* --------------------------------------------------------------------------
+   Shared section intro
+   A one-line lead paragraph under a section title.
+   -------------------------------------------------------------------------- */
+.section__lead {
+  max-width: 60ch;
+  margin-block-start: calc(-1 * var(--space-4));
+  margin-block-end: var(--space-8);
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Stack
+   Category cards grouped on `.stack__grid`, which owns its own column counts at
+   every breakpoint (the `.grid` class only supplies `display:grid` + gap).
+   -------------------------------------------------------------------------- */
+.stack__grid {
+  /* Cap at three columns so the six groups resolve to a balanced 3×2 layout
+     instead of the 4+2 auto-fit result at wide viewports. */
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 34em) {
+  .stack__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 60em) {
+  .stack__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stack__note {
+  margin-block-start: var(--space-8);
+  padding-inline-start: var(--space-4);
+  border-inline-start: 2px solid var(--accent);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Education
+   Qualification cards plus an inset languages panel (inverts to --bg because
+   the section itself sits on --bg).
+   -------------------------------------------------------------------------- */
+.education__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  transition: border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+
+.education__item:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.education__qualification {
+  font-size: 1.0625rem;
+}
+
+.education__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.education__org {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.education__dates {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.education__languages {
+  margin-block-start: var(--space-8);
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg);
+}
+
+.education__languages-title {
+  margin-block-end: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.education__language-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.education__language {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-4);
+}
+
+.education__language-name {
+  font-weight: 600;
+}
+
+.education__language-org {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Contact
+   Links-only block: a responsive grid of cards, each holding a method label
+   (.tag) and a .link-arrow. No form controls anywhere.
+   -------------------------------------------------------------------------- */
+.contact__links {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+}
+
+.contact__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  transition: border-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+
+.contact__item:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* --------------------------------------------------------------------------
+   Site footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: var(--space-8);
+  padding-block: var(--space-12);
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.site-footer__tagline,
+.site-footer__note,
+.site-footer__built,
+.site-footer__link {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.site-footer__nav-title {
+  margin-block-end: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__link {
+  text-decoration: none;
+}
+
+.site-footer__link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+@media (min-width: 48em) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion for the section-level hovers
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .education__item,
+  .contact__item {
+    transition: none !important;
+  }
+
+  .contact__item:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsive navigation
+   Below 48em the primary nav is either a JS-driven off-canvas panel or, with
+   no JavaScript at all, a plain always-visible stacked list so the anchors
+   stay reachable. The trigger only exists in the enhanced (`.js`) layout.
+   -------------------------------------------------------------------------- */
+@media (max-width: 47.99em) {
+  /* --- No-JS fallback: visible, wrapped onto its own row. --- */
+
+  /*
+   * Without JS the nav is an always-visible block on its own row, so the
+   * sticky header grows well past --header-h (measured ~161px at 375px).
+   * Raise only the anchor offset so a fragment jump still clears the header;
+   * the JS off-canvas header keeps the default 88px. Do NOT add a per-target
+   * `scroll-margin-top` as well: scroll-padding and scroll-margin stack.
+   */
+  html:not(.js) {
+    --anchor-offset: calc(var(--header-h) + 6rem);
+  }
+
+  .site-header__inner {
+    flex-wrap: wrap;
+    padding-block: var(--space-3);
+  }
+
+  .site-nav {
+    order: 3;
+    flex: 1 0 100%;
+  }
+
+  .site-nav__list {
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    padding-block: var(--space-2);
+  }
+
+  /* --- JS enhancement. --- */
+  .js .nav-toggle {
+    display: grid;
+  }
+
+  .js .site-header {
+    /* An ancestor with backdrop-filter would become the containing block for
+       the position:fixed panel/backdrop, so drop the blur on small screens and
+       use an opaque header instead. */
+    background-color: var(--bg);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .js .site-header__inner {
+    flex-wrap: nowrap;
+    padding-block: 0;
+  }
+
+  .js .site-nav {
+    order: initial;
+    flex: initial;
+    position: fixed;
+    inset: var(--header-h) 0 0 auto;
+    inline-size: min(20rem, 100%);
+    padding: var(--space-6);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background-color: var(--surface);
+    border-inline-start: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform var(--dur-base) var(--ease-out),
+      visibility 0s linear var(--dur-base);
+  }
+
+  .js .site-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--dur-base) var(--ease-out), visibility 0s;
+  }
+
+  .js .site-nav__list {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-1);
+    padding-block: 0;
+  }
+
+  .js .site-nav__link {
+    display: block;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+  }
+
+  .js .site-nav__link:hover,
+  .js .site-nav__link.is-active {
+    background-color: var(--accent-soft);
+  }
+}
+
+/* Motion is decorative: reveal/hide instantly instead of sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .js .site-nav,
+  .js .site-nav.is-open {
+    transition: none !important;
+  }
+}

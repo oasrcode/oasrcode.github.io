@@ -1,0 +1,173 @@
+/* ==========================================================================
+   base.css — Typography, layout primitives and utilities
+   Cascade position: 3 of 5 (fonts → tokens → base → components → sections)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Document + typography
+   -------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  transition: background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+h1 {
+  font-size: clamp(2.5rem, 1.8rem + 4vw, 4.5rem);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: clamp(1.75rem, 1.35rem + 2vw, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.5rem);
+}
+
+p {
+  max-width: 68ch;
+}
+
+strong {
+  font-weight: 600;
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+::selection {
+  background-color: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* --------------------------------------------------------------------------
+   2. Focus + accessibility
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.skip-link {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateY(calc(-100% - var(--space-6)));
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* --------------------------------------------------------------------------
+   3. Layout primitives
+   -------------------------------------------------------------------------- */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-pad);
+}
+
+.section {
+  padding-block: clamp(3.5rem, 8vw, 7rem);
+}
+
+.section--alt {
+  background-color: var(--surface);
+  border-block: 1px solid var(--border);
+}
+
+/* Sticky-header offset lives in tokens.css (`html { scroll-padding-top }`);
+   do not add a per-target `scroll-margin-top` here or the offset doubles. */
+
+.section__title {
+  margin-bottom: var(--space-6);
+}
+
+/* Grid primitive: responsive auto-fit columns. */
+.grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+}
+
+.grid--2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+/* Stack primitive: uniform vertical rhythm between children. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+   4. Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
