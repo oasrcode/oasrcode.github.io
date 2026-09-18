@@ -5,7 +5,7 @@ const { test, expect } = require('@playwright/test');
  * Stack + Education + Contact + footer smoke tests (content wave).
  * Verifies: every stack technology renders under its new category, both
  * qualifications and the languages line are present, the contact section is a
- * links-only block (email / LinkedIn / GitHub, no form controls at all) and the
+ * links-only block (LinkedIn / GitHub, no form controls at all) and the
  * footer year is injected.
  */
 
@@ -108,20 +108,16 @@ test('education section renders both qualifications and the languages line', asy
   }
 });
 
-test('contact section exposes email, LinkedIn and GitHub as direct links', async ({ page }) => {
+test('contact section exposes LinkedIn and GitHub as direct links', async ({ page }) => {
   await page.goto('/', { waitUntil: 'load' });
 
   const contact = page.locator('#contact');
   await expect(contact).toBeVisible();
   await expect(contact.getByRole('heading', { level: 2, name: 'Contacto' })).toBeVisible();
 
-  await expect(contact.getByRole('link', { name: 'contacto@example.com' })).toHaveAttribute(
-    'href',
-    'mailto:contacto@example.com'
-  );
   await expect(contact.getByRole('link', { name: /linkedin\.com/i })).toHaveAttribute(
     'href',
-    'https://www.linkedin.com/'
+    'https://www.linkedin.com/in/oasrjob/'
   );
   await expect(contact.getByRole('link', { name: /github\.com\/oasrcode/i })).toHaveAttribute(
     'href',
@@ -134,16 +130,13 @@ test('external contact links are safe', async ({ page }) => {
 
   const contact = page.locator('#contact');
 
-  for (const href of ['https://www.linkedin.com/', 'https://github.com/oasrcode']) {
+  for (const href of ['https://www.linkedin.com/in/oasrjob/', 'https://github.com/oasrcode']) {
     const link = contact.locator(`a[href="${href}"]`);
     await expect(link).toHaveCount(1);
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', /noopener/);
     await expect(link).toHaveAttribute('rel', /noreferrer/);
   }
-
-  // The email link stays in the same tab.
-  await expect(contact.locator('a[href^="mailto:"]')).not.toHaveAttribute('target', '_blank');
 });
 
 test('the document contains no form controls at all', async ({ page }) => {

@@ -1,135 +1,114 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Aythami Santana Rodríguez — Desarrollador Full Stack</title>
-    <meta
-      name="description"
-      content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales."
-    />
-    <meta name="author" content="Aythami Santana Rodríguez" />
-    <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#0E0B0B" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#FAF7F5" media="(prefers-color-scheme: light)" />
 
-    <!-- Canonical + icons (SVG for modern browsers, .ico fallback at the root). -->
-    <link rel="canonical" href="https://oasrcode.github.io/" />
-    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
-    <link rel="alternate icon" type="image/x-icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aythami Santana Rodríguez — Desarrollador Full Stack</title>
+  <meta name="description"
+    content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales." />
+  <meta name="author" content="Aythami Santana Rodríguez" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0E0B0B" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#FAF7F5" media="(prefers-color-scheme: light)" />
 
-    <!-- Open Graph (profile). Absolutos: los scrapers no resuelven rutas relativas. -->
-    <meta property="og:type" content="profile" />
-    <meta property="og:title" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
-    <meta
-      property="og:description"
-      content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales."
-    />
-    <meta property="og:url" content="https://oasrcode.github.io/" />
-    <meta property="og:image" content="https://oasrcode.github.io/assets/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
-    <meta property="og:locale" content="es_ES" />
-    <meta property="og:site_name" content="Aythami Santana Rodríguez" />
+  <!-- Canonical + icons (SVG for modern browsers, .ico fallback at the root). -->
+  <link rel="canonical" href="https://oasrcode.github.io/" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link rel="alternate icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
 
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
-    <meta
-      name="twitter:description"
-      content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales."
-    />
-    <meta name="twitter:image" content="https://oasrcode.github.io/assets/og-image.png" />
-    <meta name="twitter:image:alt" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
+  <!-- Open Graph (profile). Absolutos: los scrapers no resuelven rutas relativas. -->
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
+  <meta property="og:description"
+    content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales." />
+  <meta property="og:url" content="https://oasrcode.github.io/" />
+  <meta property="og:image" content="https://oasrcode.github.io/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
+  <meta property="og:locale" content="es_ES" />
+  <meta property="og:site_name" content="Aythami Santana Rodríguez" />
 
-    <!-- Anti-FOUC: resolve the theme synchronously before the first paint. -->
-    <script>
-      (function () {
-        var doc = document.documentElement;
-        // Keep in sync with STORAGE_KEY in assets/js/theme.js (single source).
-        var STORAGE_KEY = 'theme';
-        var stored = null;
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
+  <meta name="twitter:description"
+    content="Portfolio de Aythami Santana Rodríguez, desarrollador Full Stack en Las Palmas de Gran Canaria especializado en productos para emergencias y seguridad pública, IA, datos en tiempo real y datos oficiales." />
+  <meta name="twitter:image" content="https://oasrcode.github.io/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="Aythami Santana Rodríguez — Desarrollador Full Stack" />
 
-        // Storage can throw in private mode or when it is disabled. Swallow
-        // ONLY that error and fall through to the OS preference, exactly like
-        // getStoredTheme() in assets/js/theme.js.
-        try {
-          stored = window.localStorage.getItem(STORAGE_KEY);
-        } catch (error) {
-          stored = null;
-        }
+  <!-- Anti-FOUC: resolve the theme synchronously before the first paint. -->
+  <script>
+    (function () {
+      var doc = document.documentElement;
+      // Keep in sync with STORAGE_KEY in assets/js/theme.js (single source).
+      var STORAGE_KEY = 'theme';
+      var stored = null;
 
-        var theme;
-        if (stored === 'light' || stored === 'dark') {
-          theme = stored;
-        } else if (
-          typeof window.matchMedia === 'function' &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches
-        ) {
-          theme = 'dark';
-        } else if (
-          typeof window.matchMedia === 'function' &&
-          window.matchMedia('(prefers-color-scheme: light)').matches
-        ) {
-          theme = 'light';
-        } else {
-          theme = 'dark';
-        }
+      // Storage can throw in private mode or when it is disabled. Swallow
+      // ONLY that error and fall through to the OS preference, exactly like
+      // getStoredTheme() in assets/js/theme.js.
+      try {
+        stored = window.localStorage.getItem(STORAGE_KEY);
+      } catch (error) {
+        stored = null;
+      }
 
-        doc.setAttribute('data-theme', theme);
-        doc.style.colorScheme = theme;
-      })();
-    </script>
+      var theme;
+      if (stored === 'light' || stored === 'dark') {
+        theme = stored;
+      } else if (
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+      ) {
+        theme = 'dark';
+      } else if (
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-color-scheme: light)').matches
+      ) {
+        theme = 'light';
+      } else {
+        theme = 'dark';
+      }
 
-    <!--
+      doc.setAttribute('data-theme', theme);
+      doc.style.colorScheme = theme;
+    })();
+  </script>
+
+  <!--
       Progressive-enhancement flag. The enhanced-only states (off-canvas nav,
       scroll reveals) are gated behind `.js`, so if this script never runs the
       CSS fallbacks keep every anchor and all content visible. It runs before
       the body is parsed, so the first paint is already correct.
     -->
-    <script>
-      document.documentElement.classList.add('js');
-    </script>
+  <script>
+    document.documentElement.classList.add('js');
+  </script>
 
-    <!--
+  <!--
       Self-hosted variable webfonts (SIL OFL 1.1) — no third-party requests.
       Preload only the `latin` subsets the Spanish copy actually renders; the
       `latin-ext` files are declared in fonts.css and fetched lazily only if a
       glyph in that range is ever used.
     -->
-    <link
-      rel="preload"
-      href="assets/fonts/space-grotesk-latin-wght-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/inter-latin-wght-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="assets/fonts/jetbrains-mono-latin-wght-normal.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+  <link rel="preload" href="assets/fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2"
+    crossorigin />
+  <link rel="preload" href="assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/jetbrains-mono-latin-wght-normal.woff2" as="font" type="font/woff2"
+    crossorigin />
 
-    <!-- Cascade order matters: fonts → tokens → base → components → sections. -->
-    <link rel="stylesheet" href="assets/css/fonts.css" />
-    <link rel="stylesheet" href="assets/css/tokens.css" />
-    <link rel="stylesheet" href="assets/css/base.css" />
-    <link rel="stylesheet" href="assets/css/components.css" />
-    <link rel="stylesheet" href="assets/css/sections.css" />
+  <!-- Cascade order matters: fonts → tokens → base → components → sections. -->
+  <link rel="stylesheet" href="assets/css/fonts.css" />
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/sections.css" />
 
-    <!-- Datos estructurados: hechos de cv.md más detalles aportados por el autor. -->
-    <script type="application/ld+json">
+  <!-- Datos estructurados: hechos de cv.md más detalles aportados por el autor. -->
+  <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Person",
@@ -180,665 +159,558 @@
         ]
       }
     </script>
-  </head>
+</head>
 
-  <body>
-    <a class="skip-link" href="#main">Saltar al contenido principal</a>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido principal</a>
 
-    <!-- Decorative scrim behind the off-canvas nav; never announced or focused. -->
-    <div class="nav-backdrop" aria-hidden="true"></div>
+  <!-- Decorative scrim behind the off-canvas nav; never announced or focused. -->
+  <div class="nav-backdrop" aria-hidden="true"></div>
 
-    <header class="site-header">
-      <div class="container site-header__inner">
-        <a class="site-header__brand" href="#hero">Aythami Santana</a>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="site-header__brand" href="#hero">Aythami Santana</a>
 
-        <nav
-          id="primary-nav"
-          class="site-nav"
-          data-nav
-          aria-label="Navegación principal"
-        >
-          <ul class="site-nav__list">
-            <li>
-              <a class="site-nav__link" data-nav-link href="#about">Sobre mí</a>
-            </li>
-            <li>
-              <a class="site-nav__link" data-nav-link href="#experience">Experiencia</a>
-            </li>
-            <li>
-              <a class="site-nav__link" data-nav-link href="#stack">Stack</a>
-            </li>
-            <li>
-              <a class="site-nav__link" data-nav-link href="#education">Formación</a>
-            </li>
-            <li>
-              <a class="site-nav__link" data-nav-link href="#contact">Contacto</a>
-            </li>
-          </ul>
-        </nav>
+      <nav id="primary-nav" class="site-nav" data-nav aria-label="Navegación principal">
+        <ul class="site-nav__list">
+          <li>
+            <a class="site-nav__link" data-nav-link href="#about">Sobre mí</a>
+          </li>
+          <li>
+            <a class="site-nav__link" data-nav-link href="#experience">Experiencia</a>
+          </li>
+          <li>
+            <a class="site-nav__link" data-nav-link href="#stack">Stack</a>
+          </li>
+          <li>
+            <a class="site-nav__link" data-nav-link href="#education">Formación</a>
+          </li>
+          <li>
+            <a class="site-nav__link" data-nav-link href="#contact">Contacto</a>
+          </li>
+        </ul>
+      </nav>
 
-        <!--
+      <!--
           Pattern (a): a plain action button. The label describes what the
           button does (and flips with the theme in theme.js); no `aria-pressed`,
           so the name is never announced as "Activar tema claro, toggled".
         -->
-        <button
-          id="theme-toggle"
-          class="theme-toggle"
-          type="button"
-          aria-label="Activar tema claro"
-        >
-          <!-- Sun: shown while the dark theme is active. -->
-          <svg
-            class="theme-toggle__icon theme-toggle__icon--sun"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-          </svg>
-          <!-- Moon: shown while the light theme is active. -->
-          <svg
-            class="theme-toggle__icon theme-toggle__icon--moon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.75"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-            focusable="false"
-          >
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-          </svg>
-        </button>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Activar tema claro">
+        <!-- Sun: shown while the dark theme is active. -->
+        <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4" />
+          <path
+            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+        <!-- Moon: shown while the light theme is active. -->
+        <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
 
-        <!--
+      <!--
           Mobile menu trigger. Hidden on desktop and without JS; the label is
           kept in sync with the panel state by nav.js.
         -->
-        <button
-          id="nav-toggle"
-          class="nav-toggle"
-          data-nav-toggle
-          type="button"
-          aria-expanded="false"
-          aria-controls="primary-nav"
-          aria-label="Abrir menú de navegación"
-        >
-          <span class="nav-toggle__icon" aria-hidden="true"></span>
-        </button>
-      </div>
-    </header>
+      <button id="nav-toggle" class="nav-toggle" data-nav-toggle type="button" aria-expanded="false"
+        aria-controls="primary-nav" aria-label="Abrir menú de navegación">
+        <span class="nav-toggle__icon" aria-hidden="true"></span>
+      </button>
+    </div>
+  </header>
 
-    <main id="main">
-      <section id="hero" class="section section--hero" aria-labelledby="hero-title">
-        <div class="container hero__inner">
-          <p class="hero__eyebrow">Desarrollador Full Stack</p>
+  <main id="main">
+    <section id="hero" class="section section--hero" aria-labelledby="hero-title">
+      <div class="container hero__inner">
+        <p class="hero__eyebrow">Desarrollador Full Stack</p>
 
-          <h1 id="hero-title" class="hero__title">Aythami Santana Rodríguez</h1>
+        <h1 id="hero-title" class="hero__title">Aythami Santana</h1>
 
-          <p class="hero__location">
-            <svg
-              class="hero__icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path d="M12 21s-6-5.1-6-10a6 6 0 1 1 12 0c0 4.9-6 10-6 10z" />
-              <circle cx="12" cy="11" r="2.25" />
-            </svg>
-            Las Palmas de Gran Canaria, España
-          </p>
+        <p class="hero__location">
+          <svg class="hero__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="M12 21s-6-5.1-6-10a6 6 0 1 1 12 0c0 4.9-6 10-6 10z" />
+            <circle cx="12" cy="11" r="2.25" />
+          </svg>
+          Las Palmas de Gran Canaria, España
+        </p>
 
-          <p class="hero__tagline">
-            Desarrollo productos para grupos de emergencias y seguridad pública como policía local
-            y CECOPIN, con IA, datos en tiempo real, datos oficiales y sistemas de alertas.
-          </p>
+        <p class="hero__tagline">
+          Desarrollo productos para grupos de emergencias y seguridad pública como policía local
+          y CECOPIN, con IA, datos en tiempo real, datos oficiales y sistemas de alertas.
+        </p>
 
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="#experience">Ver experiencia</a>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="#experience">Ver experiencia</a>
 
-            <!--
+          <!--
               Secondary contact group. Icon-only actions, so every control carries
               an explicit aria-label and the SVGs stay aria-hidden.
             -->
-            <div class="hero__contact">
-              <a
-                class="btn btn--ghost btn--icon"
-                href="mailto:contacto@example.com"
-                aria-label="Escríbeme por correo"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <rect x="3" y="5.5" width="18" height="13" rx="2" />
-                  <path d="m3.5 7 8.5 6 8.5-6" />
-                </svg>
-              </a>
+          <div class="hero__contact">
+            <a class="btn btn--ghost btn--icon" href="https://www.linkedin.com/in/oasrjob/" target="_blank"
+              rel="noopener noreferrer" aria-label="Perfil de LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path
+                  d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z" />
+              </svg>
+            </a>
 
-              <a
-                class="btn btn--ghost btn--icon"
-                href="https://www.linkedin.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Perfil de LinkedIn"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                  <path
-                    d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"
-                  />
-                </svg>
-              </a>
-
-              <a
-                class="btn btn--ghost btn--icon"
-                href="https://github.com/oasrcode"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub de oasrcode"
-              >
-                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-                  <path
-                    d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.57v-2.2c-3.34.71-4.04-1.58-4.04-1.58-.55-1.37-1.34-1.74-1.34-1.74-1.09-.73.08-.72.08-.72 1.21.08 1.84 1.22 1.84 1.22 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.57-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 3-.4c1.02 0 2.05.13 3 .4 2.29-1.53 3.3-1.21 3.3-1.21.66 1.66.25 2.88.12 3.18.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12.02 12.02 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"
-                  />
-                </svg>
-              </a>
-            </div>
+            <a class="btn btn--ghost btn--icon" href="https://github.com/oasrcode" target="_blank"
+              rel="noopener noreferrer" aria-label="GitHub de oasrcode">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                <path
+                  d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.21 11.16.6.11.82-.25.82-.57v-2.2c-3.34.71-4.04-1.58-4.04-1.58-.55-1.37-1.34-1.74-1.34-1.74-1.09-.73.08-.72.08-.72 1.21.08 1.84 1.22 1.84 1.22 1.07 1.8 2.81 1.28 3.5.98.11-.76.42-1.28.76-1.57-2.67-.3-5.47-1.31-5.47-5.83 0-1.29.47-2.34 1.24-3.17-.13-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.21a11.6 11.6 0 0 1 3-.4c1.02 0 2.05.13 3 .4 2.29-1.53 3.3-1.21 3.3-1.21.66 1.66.25 2.88.12 3.18.77.83 1.24 1.88 1.24 3.17 0 4.53-2.81 5.53-5.49 5.82.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12.02 12.02 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z" />
+              </svg>
+            </a>
           </div>
         </div>
+      </div>
 
-        <div class="hero__scroll" aria-hidden="true">
-          <span class="hero__scroll-track"></span>
+      <div class="hero__scroll" aria-hidden="true">
+        <span class="hero__scroll-track"></span>
+      </div>
+    </section>
+
+    <section id="about" class="section section--alt" aria-labelledby="about-title">
+      <div class="container">
+        <h2 id="about-title" class="section__title" data-reveal>Sobre mí</h2>
+
+        <div class="about__layout" data-reveal>
+          <div class="about__body stack">
+            <p>
+              Soy desarrollador Full Stack y actualmente trabajo en Técnicas Competitivas,
+              principalmente en productos para grupos de emergencias y seguridad pública como
+              policía local y CECOPIN.
+            </p>
+            <p>
+              Toco bastante frontend y backend, e integro datos oficiales de Padrón, DGT,
+              DataPol-Eukalería, AEMET, IGN y Calypso, además de datos en tiempo real y sistemas
+              de alertas con MQTT y Redis. También he desarrollado un asistente con IA —un RAG
+              sobre los manuales de la aplicación y los manuales de actuación, y un chat— usando
+              LlamaIndex Workflows, spaCy y guardrails.
+            </p>
+            <p>
+              Los mapas siguen formando parte de mi stack: trabajo con MapLibre GL y Leaflet
+              para la localización y el seguimiento de unidades, además de APIs, datos de
+              sensores y herramientas de análisis como Power Bi. Antes de dedicarme principalmente al
+              desarrollo web también trabajé con Unity haciendo videojuegos educativos y con
+              Moodle.
+            </p>
+          </div>
+
+          <aside class="about__aside" aria-labelledby="about-focus-title">
+            <h3 id="about-focus-title" class="about__aside-title">Áreas de trabajo</h3>
+
+            <ul class="tag-list" role="list">
+              <li class="tag">Emergencias y seguridad pública</li>
+              <li class="tag">APIs</li>
+              <li class="tag">IA · RAG y chat</li>
+              <li class="tag">Datos en tiempo real</li>
+              <li class="tag">Sistemas de alertas</li>
+              <li class="tag">Datos oficiales</li>
+              <li class="tag">TETRA</li>
+              <li class="tag">Mapas y GIS</li>
+            </ul>
+
+            <p class="about__currently">
+              Actualmente en <strong>Técnicas Competitivas S.A.</strong> como
+              <strong>Desarrollador Full Stack</strong> desde
+              <time datetime="2023-03">marzo de 2023</time>.
+            </p>
+          </aside>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section id="about" class="section section--alt" aria-labelledby="about-title">
-        <div class="container">
-          <h2 id="about-title" class="section__title" data-reveal>Sobre mí</h2>
+    <section id="experience" class="section" aria-labelledby="experience-title">
+      <div class="container">
+        <h2 id="experience-title" class="section__title" data-reveal>Experiencia</h2>
 
-          <div class="about__layout" data-reveal>
-            <div class="about__body stack">
-              <p>
-                Soy desarrollador Full Stack y actualmente trabajo en Técnicas Competitivas,
-                principalmente en productos para grupos de emergencias y seguridad pública como
-                policía local y CECOPIN.
+        <ol class="timeline" role="list">
+          <li class="timeline__item" data-reveal>
+            <span class="timeline__node" aria-hidden="true"></span>
+
+            <article class="timeline__card card">
+              <header class="timeline__header">
+                <h3 class="timeline__role">Desarrollador Full Stack</h3>
+                <p class="timeline__company">Técnicas Competitivas S.A.</p>
+                <p class="timeline__dates">
+                  <time datetime="2023-03">Marzo 2023</time>
+                  <span class="timeline__sep" aria-hidden="true">–</span>
+                  <span class="timeline__current">Actualmente</span>
+                </p>
+              </header>
+
+              <p class="timeline__summary">
+                Trabajo principalmente en <strong><a
+                    href="https://www.tecnicascompetitivas.com/sectores/emergencias/gisecloud/"
+                    target="_blank">GISECloud</a></strong>, una plataforma orientada a la
+                gestión de grupos de emergencias y seguridad pública.
               </p>
-              <p>
-                Toco bastante frontend y backend, e integro datos oficiales de DGT,
-                DataPol-Eukalería, AEMET, IGN y Calypso, además de datos en tiempo real y sistemas
-                de alertas con MQTT y Redis. También he desarrollado un asistente con IA —un RAG
-                sobre los manuales de la aplicación y los manuales de actuación, y un chat— usando
-                LlamaIndex Workflows, spaCy y guardrails.
-              </p>
-              <p>
-                Los mapas siguen formando parte de mi stack: trabajo con MapLibre GL y Leaflet
-                para la localización y el seguimiento de unidades, además de APIs, datos de
-                sensores y herramientas de análisis. Antes de dedicarme principalmente al
-                desarrollo web también trabajé con Unity haciendo videojuegos educativos y con
-                Moodle.
-              </p>
-            </div>
 
-            <aside class="about__aside" aria-labelledby="about-focus-title">
-              <h3 id="about-focus-title" class="about__aside-title">Áreas de trabajo</h3>
-
-              <ul class="tag-list" role="list">
-                <li class="tag">Emergencias y seguridad pública</li>
-                <li class="tag">IA · RAG y chat</li>
-                <li class="tag">Datos en tiempo real</li>
-                <li class="tag">Sistemas de alertas</li>
-                <li class="tag">Datos oficiales</li>
-                <li class="tag">TETRA</li>
-                <li class="tag">Mapas y GIS</li>
-                <li class="tag">APIs</li>
+              <ul class="timeline__duties">
+                <li>
+                  Desarrollo de productos para grupos de emergencias y seguridad pública como
+                  <strong>policía local</strong> y <strong>CECOPIN</strong>.
+                </li>
+                <li>
+                  Desarrollo de un asistente con <strong>IA</strong>: un <strong>RAG</strong> sobre
+                  los manuales de la aplicación y los <strong>manuales de actuación</strong>, junto
+                  con un <strong>chat</strong>. Uso de <strong>LlamaIndex Workflows</strong>,
+                  <strong>spaCy</strong> y <strong>guardrails</strong>, con consultas de solo
+                  lectura sobre los datos de la aplicación.
+                </li>
+                <li>
+                  Sistema de alertas y comunicaciones en tiempo real con <strong>MQTT</strong> y
+                  <strong>Redis</strong>.
+                </li>
+                <li>
+                  Integración de datos y servicios oficiales de <strong>DGT</strong>,
+                  <strong>DataPol-Eukalería</strong>, <strong>AEMET</strong>, <strong>IGN</strong> y
+                  <strong>Calypso</strong>.
+                </li>
+                <li>
+                  Visualización y seguimiento de unidades mediante información procedente de
+                  <strong>TETRA</strong>.
+                </li>
+                <li>Desarrollo de la parte de incidentes y su gestión dentro de la aplicación.</li>
+                <li>Trabajo con mapas utilizando <strong>MapLibre GL y Leaflet</strong>.</li>
+                <li>Creación de informes y dashboards en <strong>Power BI</strong>.</li>
+                <li>
+                  Desarrollo de una plataforma para recibir y mostrar información procedente de
+                  sensores y sistemas de videovigilancia.
+                </li>
+                <li>
+                  Mantenimiento y desarrollo de nuevas funcionalidades en <strong><a
+                      href="https://www.google.com/search?q=%C2%BFQu%C3%A9+es+Drago+AP+del+SCS+%3F&ie=UTF-8"
+                      target="_blank"></a>DRAGO AP</strong>.
+                </li>
               </ul>
 
-              <p class="about__currently">
-                Actualmente en <strong>Técnicas Competitivas S.A.</strong> como
-                <strong>Desarrollador Full Stack</strong> desde
-                <time datetime="2023-03">marzo de 2023</time>.
+              <p class="timeline__note">
+                Es un trabajo bastante variado: dependiendo del proyecto puedo estar trabajando en
+                una pantalla de Angular, en una API, con datos de un sensor, revisando cómo se
+                muestra determinada información sobre un mapa o realizando informes estadisticos en Power Bi.
               </p>
-            </aside>
-          </div>
-        </div>
-      </section>
 
-      <section id="experience" class="section" aria-labelledby="experience-title">
-        <div class="container">
-          <h2 id="experience-title" class="section__title" data-reveal>Experiencia</h2>
-
-          <ol class="timeline" role="list">
-            <li class="timeline__item" data-reveal>
-              <span class="timeline__node" aria-hidden="true"></span>
-
-              <article class="timeline__card card">
-                <header class="timeline__header">
-                  <h3 class="timeline__role">Desarrollador Full Stack</h3>
-                  <p class="timeline__company">Técnicas Competitivas S.A.</p>
-                  <p class="timeline__dates">
-                    <time datetime="2023-03">Marzo 2023</time>
-                    <span class="timeline__sep" aria-hidden="true">–</span>
-                    <span class="timeline__current">Actualmente</span>
-                  </p>
-                </header>
-
-                <p class="timeline__summary">
-                  Trabajo principalmente en <strong>GISECloud</strong>, una plataforma orientada a la
-                  gestión de grupos de emergencias y seguridad pública.
-                </p>
-
-                <ul class="timeline__duties">
-                  <li>
-                    Desarrollo de productos para grupos de emergencias y seguridad pública como
-                    <strong>policía local</strong> y <strong>CECOPIN</strong>.
-                  </li>
-                  <li>
-                    Desarrollo de un asistente con <strong>IA</strong>: un <strong>RAG</strong> sobre
-                    los manuales de la aplicación y los <strong>manuales de actuación</strong>, junto
-                    con un <strong>chat</strong>. Uso de <strong>LlamaIndex Workflows</strong>,
-                    <strong>spaCy</strong> y <strong>guardrails</strong>, con consultas de solo
-                    lectura sobre los datos de la aplicación.
-                  </li>
-                  <li>
-                    Sistema de alertas y comunicaciones en tiempo real con <strong>MQTT</strong> y
-                    <strong>Redis</strong>.
-                  </li>
-                  <li>
-                    Integración de datos y servicios oficiales de <strong>DGT</strong>,
-                    <strong>DataPol-Eukalería</strong>, <strong>AEMET</strong>, <strong>IGN</strong> y
-                    <strong>Calypso</strong>.
-                  </li>
-                  <li>
-                    Visualización y seguimiento de unidades mediante información procedente de
-                    <strong>TETRA</strong>.
-                  </li>
-                  <li>Desarrollo de la parte de incidentes y su gestión dentro de la aplicación.</li>
-                  <li>Trabajo con mapas utilizando <strong>MapLibre GL y Leaflet</strong>.</li>
-                  <li>Creación de informes y dashboards en <strong>Power BI</strong>.</li>
-                  <li>
-                    Desarrollo de una plataforma para recibir y mostrar información procedente de
-                    sensores y sistemas de videovigilancia.
-                  </li>
-                  <li>
-                    Mantenimiento y desarrollo de nuevas funcionalidades en <strong>DRAGO AP</strong>.
-                  </li>
-                </ul>
-
-                <p class="timeline__note">
-                  Es un trabajo bastante variado: dependiendo del proyecto puedo estar trabajando en
-                  una pantalla de React, en una API, con datos de un sensor o revisando cómo se
-                  muestra determinada información sobre un mapa.
-                </p>
-
-                <ul class="tag-list" role="list">
-                  <li class="tag">Angular</li>
-                  <li class="tag">.NET / C#</li>
-                  <li class="tag">RAG</li>
-                  <li class="tag">LlamaIndex Workflows</li>
-                  <li class="tag">spaCy</li>
-                  <li class="tag">MQTT</li>
-                  <li class="tag">Redis</li>
-                  <li class="tag">TETRA</li>
-                  <li class="tag">MongoDB</li>
-                  <li class="tag">CrateDB</li>
-                  <li class="tag">Power BI</li>
-                  <li class="tag">MapLibre GL</li>
-                  <li class="tag">Leaflet</li>
-                </ul>
-              </article>
-            </li>
-
-            <li class="timeline__item" data-reveal>
-              <span class="timeline__node" aria-hidden="true"></span>
-
-              <article class="timeline__card card">
-                <header class="timeline__header">
-                  <h3 class="timeline__role">Gestor de Plataforma Moodle</h3>
-                  <p class="timeline__company">AtlasSystems S.L.</p>
-                  <p class="timeline__dates">
-                    <time datetime="2020-05">Mayo 2020</time>
-                    <span class="timeline__sep" aria-hidden="true">–</span>
-                    <time datetime="2020-07">Julio 2020</time>
-                  </p>
-                </header>
-
-                <p class="timeline__summary">
-                  Trabajé con plataformas Moodle utilizadas para cursos del <strong>SEPE</strong>.
-                </p>
-
-                <ul class="timeline__duties">
-                  <li>Gestión de cursos, contenidos y usuarios de la plataforma.</li>
-                  <li>
-                    Tareas necesarias para mantener la plataforma funcionando correctamente.
-                  </li>
-                </ul>
-
-                <ul class="tag-list" role="list">
-                  <li class="tag">Moodle</li>
-                </ul>
-              </article>
-            </li>
-
-            <li class="timeline__item" data-reveal>
-              <span class="timeline__node" aria-hidden="true"></span>
-
-              <article class="timeline__card card">
-                <header class="timeline__header">
-                  <h3 class="timeline__role">Desarrollador de Videojuegos y Formador</h3>
-                  <p class="timeline__company">DYM Canarias</p>
-                  <p class="timeline__dates">
-                    <time datetime="2018-11">Noviembre 2018</time>
-                    <span class="timeline__sep" aria-hidden="true">–</span>
-                    <time datetime="2019-12">Diciembre 2019</time>
-                  </p>
-                </header>
-
-                <p class="timeline__summary">
-                  Trabajé en el desarrollo de videojuegos educativos utilizando
-                  <strong>Unity 3D y C#</strong>.
-                </p>
-
-                <ul class="timeline__duties">
-                  <li>
-                    Desarrollo de proyectos de formación para el
-                    <strong>Servicio Canario de Empleo</strong>.
-                  </li>
-                  <li>Creación de contenidos <strong>SCORM</strong>.</li>
-                  <li>Tareas relacionadas con plataformas <strong>Moodle</strong>.</li>
-                </ul>
-
-                <ul class="tag-list" role="list">
-                  <li class="tag">Unity 3D</li>
-                  <li class="tag">C#</li>
-                  <li class="tag">SCORM</li>
-                  <li class="tag">Moodle</li>
-                </ul>
-              </article>
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section id="stack" class="section section--alt" aria-labelledby="stack-title">
-        <div class="container">
-          <h2 id="stack-title" class="section__title" data-reveal>Stack tecnológico</h2>
-
-          <p class="section__lead" data-reveal>
-            Tecnologías con las que trabajo en el día a día, agrupadas por área.
-          </p>
-
-          <div class="stack__grid grid" data-reveal>
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Lenguajes y Frontend</h3>
               <ul class="tag-list" role="list">
-                <li class="tag">JavaScript</li>
-                <li class="tag">TypeScript</li>
                 <li class="tag">Angular</li>
-                <li class="tag">Tailwind CSS</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Backend</h3>
-              <ul class="tag-list" role="list">
-                <li class="tag">C#</li>
-                <li class="tag">.NET</li>
-                <li class="tag">REST APIs</li>
-                <li class="tag">MVC</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">IA</h3>
-              <ul class="tag-list" role="list">
+                <li class="tag">.NET / C#</li>
                 <li class="tag">RAG</li>
                 <li class="tag">LlamaIndex Workflows</li>
                 <li class="tag">spaCy</li>
-                <li class="tag">guardrails</li>
-                <li class="tag">Consultas de solo lectura</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Tiempo real y alertas</h3>
-              <ul class="tag-list" role="list">
                 <li class="tag">MQTT</li>
                 <li class="tag">Redis</li>
                 <li class="tag">TETRA</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Datos</h3>
-              <ul class="tag-list" role="list">
                 <li class="tag">MongoDB</li>
                 <li class="tag">CrateDB</li>
                 <li class="tag">Power BI</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Datos oficiales</h3>
-              <ul class="tag-list" role="list">
-                <li class="tag">DGT</li>
-                <li class="tag">DataPol-Eukalería</li>
-                <li class="tag">AEMET</li>
-                <li class="tag">IGN</li>
-                <li class="tag">Calypso</li>
-              </ul>
-            </article>
-
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Mapas y GIS</h3>
-              <ul class="tag-list" role="list">
                 <li class="tag">MapLibre GL</li>
                 <li class="tag">Leaflet</li>
               </ul>
             </article>
+          </li>
 
-            <article class="stack-card card">
-              <h3 class="stack-card__title">Herramientas</h3>
+          <li class="timeline__item" data-reveal>
+            <span class="timeline__node" aria-hidden="true"></span>
+
+            <article class="timeline__card card">
+              <header class="timeline__header">
+                <h3 class="timeline__role">Gestor de Plataforma Moodle</h3>
+                <p class="timeline__company">AtlasSystems S.L.</p>
+                <p class="timeline__dates">
+                  <time datetime="2020-05">Mayo 2020</time>
+                  <span class="timeline__sep" aria-hidden="true">–</span>
+                  <time datetime="2020-07">Julio 2020</time>
+                </p>
+              </header>
+
+              <p class="timeline__summary">
+                Trabajé con plataformas Moodle utilizadas para cursos del <strong>SEPE</strong>.
+              </p>
+
+              <ul class="timeline__duties">
+                <li>Gestión de cursos, contenidos y usuarios de la plataforma.</li>
+                <li>
+                  Tareas necesarias para mantener la plataforma funcionando correctamente.
+                </li>
+              </ul>
+
               <ul class="tag-list" role="list">
-                <li class="tag">Git</li>
-                <li class="tag">Azure</li>
-                <li class="tag">Jira</li>
+                <li class="tag">Moodle</li>
               </ul>
             </article>
-          </div>
+          </li>
 
-          <p class="stack__note">
-            También he integrado datos y servicios oficiales de <strong>DGT</strong>,
-            <strong>DataPol-Eukalería</strong>, <strong>AEMET</strong>, <strong>IGN</strong> y
-            <strong>Calypso</strong>, además de sistemas de posicionamiento mediante
-            <strong>TETRA</strong> y alertas en tiempo real con <strong>MQTT</strong> y
-            <strong>Redis</strong>.
-          </p>
-        </div>
-      </section>
+          <li class="timeline__item" data-reveal>
+            <span class="timeline__node" aria-hidden="true"></span>
 
-      <section id="education" class="section" aria-labelledby="education-title">
-        <div class="container">
-          <h2 id="education-title" class="section__title" data-reveal>Formación</h2>
+            <article class="timeline__card card">
+              <header class="timeline__header">
+                <h3 class="timeline__role">Desarrollador de Videojuegos y Formador</h3>
+                <p class="timeline__company">DYM Canarias</p>
+                <p class="timeline__dates">
+                  <time datetime="2018-11">Noviembre 2018</time>
+                  <span class="timeline__sep" aria-hidden="true">–</span>
+                  <time datetime="2019-12">Diciembre 2019</time>
+                </p>
+              </header>
 
-          <div class="education__grid grid grid--2" data-reveal>
-            <article class="education__item card">
-              <h3 class="education__qualification">
-                CFGS Desarrollo de Aplicaciones Multiplataforma (DAM)
-              </h3>
-              <p class="education__meta">
-                <span class="education__org">IES El Rincón</span>
-                <span class="education__dates">
-                  <time datetime="2020">2020</time>
-                  <span aria-hidden="true">–</span>
-                  <time datetime="2023">2023</time>
-                </span>
+              <p class="timeline__summary">
+                Trabajé en el desarrollo de videojuegos educativos utilizando
+                <strong>Unity 3D y C#</strong>.
               </p>
-            </article>
 
-            <article class="education__item card">
-              <h3 class="education__qualification">
-                Desarrollo de Videojuegos y Realidad Virtual con Unity 3D
-              </h3>
-              <p class="education__meta">
-                <span class="education__org">DYM Canarias</span>
-                <span class="education__dates">
-                  <time datetime="2018">2018</time>
-                </span>
-              </p>
-            </article>
-          </div>
+              <ul class="timeline__duties">
+                <li>
+                  Desarrollo de proyectos de formación para el
+                  <strong>Servicio Canario de Empleo</strong>.
+                </li>
+                <li>Creación de contenidos <strong>SCORM</strong>.</li>
+                <li>Tareas relacionadas con plataformas <strong>Moodle</strong>.</li>
+              </ul>
 
-          <div class="education__languages" data-reveal>
-            <h3 class="education__languages-title">Idiomas</h3>
-            <ul class="education__language-list" role="list">
-              <li class="education__language">
-                <span class="education__language-name">Inglés B2.1</span>
-                <span class="education__language-org">Escuela Oficial de Idiomas</span>
-              </li>
-              <li class="education__language">
-                <span class="education__language-name">ERASMUS+</span>
-                <span class="education__language-org">
-                  Prácticas internacionales · <time datetime="2014">2014</time>
-                </span>
-              </li>
+              <ul class="tag-list" role="list">
+                <li class="tag">Unity 3D</li>
+                <li class="tag">C#</li>
+                <li class="tag">SCORM</li>
+                <li class="tag">Moodle</li>
+              </ul>
+            </article>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="stack" class="section section--alt" aria-labelledby="stack-title">
+      <div class="container">
+        <h2 id="stack-title" class="section__title" data-reveal>Stack tecnológico</h2>
+
+        <p class="section__lead" data-reveal>
+          Tecnologías con las que trabajo en el día a día, agrupadas por área.
+        </p>
+
+        <div class="stack__grid grid" data-reveal>
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Lenguajes y Frontend</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">JavaScript</li>
+              <li class="tag">TypeScript</li>
+              <li class="tag">Angular</li>
+              <li class="tag">React / Nextjs</li>
+              <li class="tag">Tailwind CSS</li>
             </ul>
-          </div>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Backend</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">C#</li>
+              <li class="tag">.NET</li>
+              <li class="tag">Nodejs</li>
+              <li class="tag">Fast API</li>
+              <li class="tag">Python</li>
+              <li class="tag">REST APIs</li>
+              <li class="tag">MVC</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">IA</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">RAG</li>
+              <li class="tag">LlamaIndex Workflows</li>
+              <li class="tag">spaCy</li>
+              <li class="tag">guardrails</li>
+              <li class="tag">Consultas de solo lectura</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Tiempo real y alertas</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">MQTT</li>
+              <li class="tag">Redis</li>
+              <li class="tag">TETRA</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Datos</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">Postgresql</li>
+              <li class="tag">MongoDB</li>
+              <li class="tag">CrateDB</li>
+              <li class="tag">Power BI</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Datos oficiales</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">DGT</li>
+              <li class="tag">DataPol-Eukalería</li>
+              <li class="tag">AEMET</li>
+              <li class="tag">IGN</li>
+              <li class="tag">Calypso</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Mapas y GIS</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">MapLibre GL</li>
+              <li class="tag">Leaflet</li>
+            </ul>
+          </article>
+
+          <article class="stack-card card">
+            <h3 class="stack-card__title">Herramientas</h3>
+            <ul class="tag-list" role="list">
+              <li class="tag">Git</li>
+              <li class="tag">Azure</li>
+              <li class="tag">Jira</li>
+            </ul>
+          </article>
         </div>
-      </section>
 
-      <section id="contact" class="section section--alt" aria-labelledby="contact-title">
-        <div class="container">
-          <h2 id="contact-title" class="section__title" data-reveal>Contacto</h2>
+        <p class="stack__note">
+          También he integrado datos y servicios oficiales de <strong>Padrón</strong>, <strong>DGT</strong>,
+          <strong>DataPol-Eukalería</strong>, <strong>AEMET</strong>, <strong>IGN</strong> y
+          <strong>Calypso</strong>, además de sistemas de posicionamiento mediante
+          <strong>TETRA</strong> y alertas en tiempo real con <strong>MQTT</strong> y
+          <strong>Redis</strong>.
+        </p>
+      </div>
+    </section>
 
-          <p class="section__lead" data-reveal>
-            ¿Tienes un proyecto o una oferta en mente? Escríbeme y te respondo lo antes posible.
-          </p>
+    <section id="education" class="section" aria-labelledby="education-title">
+      <div class="container">
+        <h2 id="education-title" class="section__title" data-reveal>Formación</h2>
 
-          <!--
+        <div class="education__grid grid grid--2" data-reveal>
+          <article class="education__item card">
+            <h3 class="education__qualification">
+              CFGS Desarrollo de Aplicaciones Multiplataforma (DAM)
+            </h3>
+            <p class="education__meta">
+              <span class="education__org">IES El Rincón</span>
+              <span class="education__dates">
+                <time datetime="2020">2020</time>
+                <span aria-hidden="true">–</span>
+                <time datetime="2023">2023</time>
+              </span>
+            </p>
+          </article>
+
+          <article class="education__item card">
+            <h3 class="education__qualification">
+              Desarrollo de Videojuegos y Realidad Virtual con Unity 3D
+            </h3>
+            <p class="education__meta">
+              <span class="education__org">DYM Canarias</span>
+              <span class="education__dates">
+                <time datetime="2018">2018</time>
+              </span>
+            </p>
+          </article>
+        </div>
+
+        <div class="education__languages" data-reveal>
+          <h3 class="education__languages-title">Idiomas</h3>
+          <ul class="education__language-list" role="list">
+            <li class="education__language">
+              <span class="education__language-name">Inglés B2.1</span>
+              <span class="education__language-org">Escuela Oficial de Idiomas</span>
+            </li>
+            <li class="education__language">
+              <span class="education__language-name">ERASMUS+</span>
+              <span class="education__language-org">
+                Prácticas internacionales · <time datetime="2014">2014</time>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section section--alt" aria-labelledby="contact-title">
+      <div class="container">
+        <h2 id="contact-title" class="section__title" data-reveal>Contacto</h2>
+
+        <p class="section__lead" data-reveal>
+          ¿Tienes un proyecto o una oferta en mente? Escríbeme y te respondo lo antes posible.
+        </p>
+
+        <!--
             Links-only contact block. Each method reuses the shared .card,
             .tag and .link-arrow components; external links carry
             rel="noopener noreferrer".
           -->
-          <ul class="contact__links" role="list" data-reveal>
-            <li class="contact__item card">
-              <span class="tag">Email</span>
-              <!-- TODO(oasr): replace with real email address -->
-              <a class="link-arrow" href="mailto:contacto@example.com">
-                contacto@example.com
-              </a>
-            </li>
+        <ul class="contact__links" role="list" data-reveal>
+          <li class="contact__item card">
+            <span class="tag">LinkedIn</span>
+            <a class="link-arrow" href="https://www.linkedin.com/in/oasrjob/" target="_blank" rel="noopener noreferrer">
+              linkedin.com
+              <svg class="link-arrow__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M7 17 17 7M8 7h9v9" />
+              </svg>
+            </a>
+          </li>
 
-            <li class="contact__item card">
-              <span class="tag">LinkedIn</span>
-              <!-- TODO(oasr): replace with real LinkedIn profile URL -->
-              <a
-                class="link-arrow"
-                href="https://www.linkedin.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                linkedin.com
-                <svg
-                  class="link-arrow__icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M7 17 17 7M8 7h9v9" />
-                </svg>
-              </a>
-            </li>
-
-            <li class="contact__item card">
-              <span class="tag">GitHub</span>
-              <a
-                class="link-arrow"
-                href="https://github.com/oasrcode"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                github.com/oasrcode
-                <svg
-                  class="link-arrow__icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.75"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M7 17 17 7M8 7h9v9" />
-                </svg>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container site-footer__inner">
-        <div class="site-footer__brand">
-          <p class="site-footer__name">Aythami Santana Rodríguez</p>
-          <p class="site-footer__tagline">
-            Desarrollador Full Stack · emergencias, IA y tiempo real.
-          </p>
-        </div>
-
-        <nav class="site-footer__nav" aria-label="Navegación del pie de página">
-          <h2 class="site-footer__nav-title">Secciones</h2>
-          <ul class="site-footer__list" role="list">
-            <li><a class="site-footer__link" href="#about">Sobre mí</a></li>
-            <li><a class="site-footer__link" href="#experience">Experiencia</a></li>
-            <li><a class="site-footer__link" href="#stack">Stack</a></li>
-            <li><a class="site-footer__link" href="#education">Formación</a></li>
-            <li><a class="site-footer__link" href="#contact">Contacto</a></li>
-          </ul>
-        </nav>
-
-        <div class="site-footer__meta">
-          <a
-            class="site-footer__link"
-            href="https://github.com/oasrcode"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            github.com/oasrcode
-          </a>
-          <p class="site-footer__note">
-            © <span data-current-year>2026</span> Aythami Santana Rodríguez
-          </p>
-          <p class="site-footer__built">Hecho con HTML, CSS y JavaScript vanilla.</p>
-        </div>
+          <li class="contact__item card">
+            <span class="tag">GitHub</span>
+            <a class="link-arrow" href="https://github.com/oasrcode" target="_blank" rel="noopener noreferrer">
+              github.com/oasrcode
+              <svg class="link-arrow__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M7 17 17 7M8 7h9v9" />
+              </svg>
+            </a>
+          </li>
+        </ul>
       </div>
-    </footer>
+    </section>
+  </main>
 
-    <script type="module" src="assets/js/main.js"></script>
-  </body>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <p class="site-footer__name">Aythami Santana Rodríguez</p>
+        <p class="site-footer__tagline">
+          Desarrollador Full Stack · emergencias, IA y tiempo real.
+        </p>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Navegación del pie de página">
+        <h2 class="site-footer__nav-title">Secciones</h2>
+        <ul class="site-footer__list" role="list">
+          <li><a class="site-footer__link" href="#about">Sobre mí</a></li>
+          <li><a class="site-footer__link" href="#experience">Experiencia</a></li>
+          <li><a class="site-footer__link" href="#stack">Stack</a></li>
+          <li><a class="site-footer__link" href="#education">Formación</a></li>
+          <li><a class="site-footer__link" href="#contact">Contacto</a></li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__meta">
+        <a class="site-footer__link" href="https://github.com/oasrcode" target="_blank" rel="noopener noreferrer">
+          github.com/oasrcode
+        </a>
+        <p class="site-footer__note">
+          © <span data-current-year>2026</span> Aythami Santana Rodríguez
+        </p>
+        <p class="site-footer__built">Hecho con HTML, CSS y JavaScript vanilla.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+
 </html>

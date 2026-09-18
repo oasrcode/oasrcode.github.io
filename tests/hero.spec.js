@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 /**
  * Hero smoke tests.
  * Verifies: the real content renders, the primary CTA targets the experience
- * anchor, the secondary contact group exposes email/LinkedIn/GitHub with safe
+ * anchor, the secondary contact group exposes LinkedIn/GitHub with safe
  * external attributes, every action has an accessible name and the hero still
  * fits a single desktop viewport.
  */
@@ -15,7 +15,7 @@ test('renders the hero content', async ({ page }) => {
   const hero = page.locator('#hero');
   await expect(hero).toBeVisible();
 
-  await expect(page.locator('#hero-title')).toHaveText('Aythami Santana Rodríguez');
+  await expect(page.locator('#hero-title')).toHaveText('Aythami Santana');
   await expect(hero.getByText('Desarrollador Full Stack')).toBeVisible();
   await expect(hero.getByText('Las Palmas de Gran Canaria, España')).toBeVisible();
 });
@@ -43,8 +43,7 @@ test('every hero action is reachable by its accessible name', async ({ page }) =
   // this is also the assertion that no icon-only control ships unnamed.
   const actions = [
     { name: 'Ver experiencia', href: '#experience' },
-    { name: 'Escríbeme por correo', href: 'mailto:contacto@example.com' },
-    { name: 'Perfil de LinkedIn', href: 'https://www.linkedin.com/' },
+    { name: 'Perfil de LinkedIn', href: 'https://www.linkedin.com/in/oasrjob/' },
     { name: 'GitHub de oasrcode', href: 'https://github.com/oasrcode' },
   ];
 
@@ -61,7 +60,7 @@ test('external hero contact links are safe', async ({ page }) => {
 
   const hero = page.locator('#hero');
 
-  for (const href of ['https://www.linkedin.com/', 'https://github.com/oasrcode']) {
+  for (const href of ['https://www.linkedin.com/in/oasrjob/', 'https://github.com/oasrcode']) {
     const link = hero.locator(`a[href="${href}"]`);
     await expect(link).toHaveCount(1);
     await expect(link).toHaveAttribute('target', '_blank');

@@ -17,7 +17,7 @@ más detalles adicionales aportados directamente por el autor. Incluye:
 - Navegación móvil accesible (panel off-canvas, trampa de foco, cierre con Escape,
   bloqueo de scroll y cierre al cruzar a escritorio).
 - Scroll-spy con `IntersectionObserver` y animaciones de aparición de un solo uso.
-- Contacto solo con enlaces (email, LinkedIn, GitHub): **no hay formulario**.
+- Contacto solo con enlaces (LinkedIn, GitHub): **no hay formulario**.
 - Metadatos SEO completos (Open Graph, Twitter Card, JSON-LD `Person`).
 - Tipografías self-hosted, sin peticiones a terceros.
 
@@ -163,12 +163,8 @@ contenido de la rama es el sitio.
 
 ## Pendientes antes de publicar
 
-Solo quedan dos *placeholders*, ambos con un `TODO(oasr)` en `index.html`:
-
-- **Email de contacto** — `contacto@example.com`, usado en el `mailto:` de la
-  sección de contacto y en el hero. Sustituir por la dirección real.
-- **LinkedIn** — el enlace apunta a `https://www.linkedin.com/` como marcador.
-  Sustituir por la URL del perfil real (también en el hero).
+No quedan *placeholders* ni `TODO(oasr)` en `index.html`: los enlaces de
+contacto apuntan ya a los perfiles reales de LinkedIn y GitHub.
 
 No hay formulario, Formspree ni Web3Forms: el contacto es exclusivamente por
 enlaces.
