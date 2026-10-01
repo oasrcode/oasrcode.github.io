@@ -13,7 +13,7 @@ export interface SmoothScroll {
  *  - GSAP's ticker drives Lenis' raf (single rAF loop)
  *  - lagSmoothing is disabled so scrubbed values track the real scroll.
  *
- * Same-page anchor links (`#work`, `#about`, …) are intercepted explicitly:
+ * Same-page anchor links (`#portfolio`, `#about`, …) are intercepted explicitly:
  * Lenis' own `anchors` handler does not call preventDefault, so the browser's
  * instant hash jump would win. We preventDefault and hand the target to Lenis
  * so the scroll is animated instead of snapped.

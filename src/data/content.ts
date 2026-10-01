@@ -25,8 +25,6 @@ export interface UI {
   nav: {
     ariaLabel: string;
     work: string;
-    /** Download control; only rendered when public/cv.pdf exists. */
-    cv: string;
     /** Social links (open in a new tab). */
     linkedin: string;
     linkedinAria: string;
@@ -39,6 +37,12 @@ export interface UI {
   };
   langSwitch: {
     label: string;
+    /** Visible short codes on the ES/EN language switch. */
+    esShort: string;
+    enShort: string;
+    /** Accessible names for the ES/EN language switch buttons. */
+    esAria: string;
+    enAria: string;
   };
   hero: {
     linkedin: string;
@@ -69,10 +73,6 @@ export interface UI {
   };
   skills: {
     present: string;
-  };
-  cv: {
-    /** Label for the CV download control (footer + nav). */
-    download: string;
   };
   footer: {
     socials: string;
@@ -400,8 +400,7 @@ export const ui: Record<Locale, UI> = {
     skipLink: 'Saltar al contenido',
     nav: {
       ariaLabel: 'Navegación principal',
-      work: 'Trabajo',
-      cv: 'CV',
+      work: 'Portfolio',
       linkedin: 'LinkedIn',
       linkedinAria: 'Perfil de LinkedIn de Aythami Santana (se abre en una pestaña nueva)',
       github: 'GitHub',
@@ -411,6 +410,10 @@ export const ui: Record<Locale, UI> = {
     },
     langSwitch: {
       label: 'Idioma',
+      esShort: 'ES',
+      enShort: 'EN',
+      esAria: 'Español',
+      enAria: 'English',
     },
     hero: {
       linkedin: 'LinkedIn',
@@ -442,9 +445,6 @@ export const ui: Record<Locale, UI> = {
     skills: {
       present: 'hoy',
     },
-    cv: {
-      download: 'Descargar CV',
-    },
     footer: {
       socials: 'Redes',
       linkedin: 'LinkedIn',
@@ -461,8 +461,7 @@ export const ui: Record<Locale, UI> = {
     skipLink: 'Skip to content',
     nav: {
       ariaLabel: 'Main navigation',
-      work: 'Work',
-      cv: 'CV',
+      work: 'Portfolio',
       linkedin: 'LinkedIn',
       linkedinAria: 'Aythami Santana’s LinkedIn profile (opens in a new tab)',
       github: 'GitHub',
@@ -472,6 +471,10 @@ export const ui: Record<Locale, UI> = {
     },
     langSwitch: {
       label: 'Language',
+      esShort: 'ES',
+      enShort: 'EN',
+      esAria: 'Español',
+      enAria: 'English',
     },
     hero: {
       linkedin: 'LinkedIn',
@@ -502,9 +505,6 @@ export const ui: Record<Locale, UI> = {
     },
     skills: {
       present: 'now',
-    },
-    cv: {
-      download: 'Download CV',
     },
     footer: {
       socials: 'Socials',

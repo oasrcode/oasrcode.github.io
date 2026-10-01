@@ -1,10 +1,10 @@
 ---
 import type { Locale } from '../data/content';
-import { projects, profile } from '../data/content';
+import { profile, projects } from '../data/content';
 import { getUI } from '../i18n';
-import Section from './ui/Section.astro';
-import ProjectCard from './ui/ProjectCard.astro';
 import Button from './ui/Button.astro';
+import ProjectCard from './ui/ProjectCard.astro';
+import Section from './ui/Section.astro';
 
 interface Props {
   lang: Locale;
@@ -27,7 +27,7 @@ const singleProject = projects.length === 1 ? projects[0] : null;
   `html.js-motion`, so no-JS and reduced-motion visitors get a simple vertical
   stack of the same cards (nothing is clipped or unreachable).
 -->
-<Section id="work" title={t.sections.portfolio} i18nKey="sections.portfolio">
+<Section id="portfolio" title={t.sections.portfolio} i18nKey="sections.portfolio">
   {hasGallery ? (
     <div class="projects-pin" data-pin>
       <div class="projects-pin__track" data-pin-track>

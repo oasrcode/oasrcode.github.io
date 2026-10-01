@@ -2,8 +2,6 @@
 import type { Locale } from '../data/content';
 import { profile } from '../data/content';
 import { getUI } from '../i18n';
-import { hasCv } from '../lib/cv';
-import CvDownload from './ui/CvDownload.astro';
 
 interface Props {
   lang: Locale;
@@ -16,10 +14,9 @@ const year = new Date().getFullYear();
 ---
 
 <!--
-  Minimal footer: copyright on the left, the two social profiles (and the CV
-  download when public/cv.pdf exists) on the right. No contact block: the only
-  channels are LinkedIn and GitHub, and the hero already carries the primary
-  CTAs.
+  Minimal footer: copyright on the left, the two social profiles on the right.
+  No contact block: the only channels are LinkedIn and GitHub, and the hero
+  already carries the primary CTAs.
 -->
 <footer class="site-footer">
   <div class="container site-footer__row">
@@ -46,7 +43,6 @@ const year = new Date().getFullYear();
           data-i18n="footer.github">{t.footer.github}</a
         >
       </nav>
-      {hasCv && <CvDownload lang={lang} />}
     </div>
   </div>
 </footer>

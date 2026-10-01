@@ -2,7 +2,6 @@
 import type { Locale } from '../data/content';
 import { profile } from '../data/content';
 import { getUI, htmlLang } from '../i18n';
-import { CV_HREF, hasCv } from '../lib/cv';
 
 interface Props {
   /** Server-rendered language (Spanish). */
@@ -46,12 +45,7 @@ const t = getUI(lang);
       data-i18n-attr="aria-label:nav.ariaLabel"
     >
       <ul class="nav-links__list">
-        <li><a href="#work" data-i18n="nav.work">{t.nav.work}</a></li>
-        {hasCv && (
-          <li>
-            <a href={CV_HREF} download data-i18n="nav.cv">{t.nav.cv}</a>
-          </li>
-        )}
+        <li><a href="#portfolio" data-i18n="nav.work">{t.nav.work}</a></li>
         <li>
           <a
             href={profile.linkedin}
@@ -100,16 +94,16 @@ const t = getUI(lang);
           class="nav-lang__opt"
           data-lang-set="es"
           lang={htmlLang('es')}
-          aria-label="Español"
-          aria-current={lang === 'es' ? 'page' : undefined}>ES</button
+          aria-label={t.langSwitch.esAria}
+          aria-current={lang === 'es' ? 'page' : undefined}>{t.langSwitch.esShort}</button
         >
         <button
           type="button"
           class="nav-lang__opt"
           data-lang-set="en"
           lang={htmlLang('en')}
-          aria-label="English"
-          aria-current={lang === 'en' ? 'page' : undefined}>EN</button
+          aria-label={t.langSwitch.enAria}
+          aria-current={lang === 'en' ? 'page' : undefined}>{t.langSwitch.enShort}</button
         >
       </div>
 
@@ -178,7 +172,7 @@ const t = getUI(lang);
     padding-top: var(--nav-clearance);
   }
 
-  /* Native anchor jumps (`#work`, skip link) clear the fixed bar. Lenis reads
+  /* Native anchor jumps (`#portfolio`, skip link) clear the fixed bar. Lenis reads
      the same `scroll-padding-top`, so the smooth scroll does too. */
   html {
     scroll-padding-top: var(--nav-scroll-offset);
