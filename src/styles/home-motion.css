@@ -1,0 +1,111 @@
+/* ==========================================================================
+   Home motion — global states shared by the scroll-driven effects.
+   Imported only by the Home page (`src/pages/index.astro`).
+
+   Every rule that hides content is gated on `html.js-motion`, the class the
+   inline bootstrap adds before first paint. With no JS, or with
+   `prefers-reduced-motion: reduce` (which skips the bootstrap), none of these
+   rules match and the page renders in its final, fully-visible state.
+   ========================================================================== */
+
+/* Section title wipe — headings start clipped and open on scroll. */
+html.js-motion [data-wipe] {
+  clip-path: inset(0 100% 0 0);
+}
+
+/* Skills stagger — tags wait for their one-time reveal. */
+html.js-motion [data-stagger-item] {
+  opacity: 0;
+}
+
+/* Experience rail — the gradient "lit" stroke waits for the scrubbed draw so
+   the rail never flashes fully lit before GSAP boots. The faint track, the
+   comet head and every entry stay inert/visible without it. */
+html.js-motion [data-rail-lit] {
+  opacity: 0;
+}
+
+/* About pull-quote — the signature bar waits to be drawn on reveal, after the
+   statement's mask wipe has opened. */
+html.js-motion [data-quote-bar] {
+  transform: scaleX(0);
+}
+
+/* About dossier — fact blocks wait for the one-time stagger and their hairline
+   separators wait to be drawn. */
+html.js-motion [data-dossier-item] {
+  opacity: 0;
+}
+
+html.js-motion [data-dossier-rule] {
+  transform: scaleX(0);
+}
+
+/* Pinned gallery (mobile fallback) — cards wait for the vertical reveal. */
+@media (max-width: 768px) {
+  html.js-motion [data-pin-card] {
+    opacity: 0;
+  }
+}
+
+/* Magnetic cursor — additive accent over the native pointer. Hidden until the
+   effect opts in via `html.ml-cursor-on`, so touch / reduced-motion never see
+   it. The native cursor stays visible, so nothing becomes unusable. */
+.motion-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--spark);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+html.ml-cursor-on .motion-cursor {
+  opacity: 0.7;
+}
+
+/* Belt and suspenders: if reduced motion is on, force the final state even if
+   a future change ever adds `js-motion`. */
+@media (prefers-reduced-motion: reduce) {
+  html.js-motion [data-wipe] {
+    clip-path: none !important;
+  }
+
+  html.js-motion [data-stagger-item] {
+    opacity: 1 !important;
+  }
+
+  html.js-motion [data-pin-card] {
+    opacity: 1 !important;
+  }
+
+  html.js-motion [data-rail-lit] {
+    opacity: 1 !important;
+  }
+
+  html.js-motion [data-quote-bar] {
+    transform: none !important;
+  }
+
+  html.js-motion [data-dossier-item] {
+    opacity: 1 !important;
+  }
+
+  html.js-motion [data-dossier-rule] {
+    transform: none !important;
+  }
+
+  [data-rail-head] {
+    display: none !important;
+  }
+
+  .motion-cursor {
+    display: none !important;
+  }
+}

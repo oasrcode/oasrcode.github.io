@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Design tokens — oasrcode portfolio
+   Wave 0 tokens (values locked). Wave 1 extends the type scale and adds
+   project hues + layout/motion primitives. Register A (home).
+   ========================================================================== */
+
+:root {
+  /* Color — neutral anchor dominates (>=90%); vivid tones used sparingly. */
+  --base: #f3f4fb;    /* off-white periwinkle background (not pure white) */
+  --surface: #ffffff; /* raised surfaces / cards */
+  --ink: #1a1d26;     /* primary text */
+  --muted: #6b7180;   /* secondary text */
+  --line: #dcdde8;    /* hairlines / borders */
+  --spark: #2d3cf0;   /* dominant accent: links / CTAs */
+  --trigger: #ffb000; /* warm counterpoint, used sparingly */
+  --signal: #00a37a;  /* semantic / state */
+
+  /* Derived: --muted is 4.88:1 on --surface but only 4.45:1 on --base.
+     Small secondary text sitting on --base uses this darker mix to clear AA.
+     (Derived via color-mix; the locked --muted value itself is unchanged.) */
+  --muted-2: color-mix(in srgb, var(--muted) 78%, var(--ink));
+
+  /* Project hues — one vivid colour per hue slot (generic, not tied to any
+     particular project). Project cards pick their own hue via `Project.hueVar`.
+     All pair with white text (contrast >= 4.5:1 on the colour field). */
+  --project-gisec: #2d3cf0; /* vivid blue */
+  --project-sensor: #0b7285; /* deep teal */
+  --project-drago: #c2410c;  /* burnt orange */
+
+  /* On-colour ink for text sitting on vivid fields. */
+  --on-spark: #ffffff;
+
+  /* Typography — families (self-hosted, declared in fonts.css). */
+  --font-display: 'CabinetGrotesk', sans-serif;
+  --font-body: 'Satoshi', sans-serif;
+  --font-mono: 'Geist Mono', monospace;
+
+  /* Fluid type scale (clamp: min, preferred, max). */
+  --text-small: clamp(0.875rem, 0.82rem + 0.2vw, 1rem);
+  --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --text-h2: clamp(1.75rem, 1.4rem + 1.4vw, 2.5rem);
+  --text-h1: clamp(2.5rem, 1.9rem + 3vw, 4.25rem);
+
+  /* Wave 1 additions: the hero is the one place we go big. */
+  --text-display: clamp(3rem, 1.6rem + 9vw, 8rem);
+  --text-lead: clamp(1.15rem, 1.02rem + 0.7vw, 1.55rem);
+  --text-tag: clamp(0.78rem, 0.74rem + 0.15vw, 0.875rem);
+
+  /* Line heights paired with the scale. */
+  --leading-tight: 1.08;
+  --leading-body: 1.6;
+
+  /* Layout primitives. */
+  --container: 74rem;              /* 1184px content shell */
+  --container-narrow: 44rem;       /* readable measure (~66ch) */
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --section-y: clamp(4rem, 9vw, 8.5rem);
+
+  /* Shape. Intentionally small/technical, not pill-soft everywhere. */
+  --radius-sm: 4px;
+  --radius-md: 10px;
+
+  /* Motion. One orchestrated page-load moment lives in Hero.astro. */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}

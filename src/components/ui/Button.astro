@@ -1,0 +1,82 @@
+---
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  external?: boolean;
+  /** Optional accessible label when the visible text is not enough. */
+  label?: string;
+  /** Opt into the magnetic-cursor drift (desktop fine-pointer only). */
+  magnetic?: boolean;
+  /** i18n key for the visible label (swapped client-side). */
+  i18nKey?: string;
+  /** i18n key for the aria-label (swapped client-side). */
+  i18nAriaKey?: string;
+}
+
+const {
+  href,
+  variant = 'primary',
+  external = false,
+  label,
+  magnetic = false,
+  i18nKey,
+  i18nAriaKey,
+} = Astro.props;
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+
+<a
+  class={`btn btn--${variant}`}
+  href={href}
+  aria-label={label}
+  target={target}
+  rel={rel}
+  data-magnetic={magnetic ? '' : undefined}
+  data-i18n={i18nKey}
+  data-i18n-attr={i18nAriaKey ? `aria-label:${i18nAriaKey}` : undefined}
+>
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem 1.2rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .btn--primary {
+    background: var(--spark);
+    color: var(--on-spark);
+  }
+
+  .btn--primary:hover {
+    background: color-mix(in srgb, var(--spark) 84%, #000);
+  }
+
+  .btn--secondary {
+    background: transparent;
+    border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+    color: var(--ink);
+  }
+
+  .btn--secondary:hover {
+    border-color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+  }
+</style>

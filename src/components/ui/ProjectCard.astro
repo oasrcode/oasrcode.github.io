@@ -1,0 +1,169 @@
+---
+import type { Locale, Project } from '../../data/content';
+import { getUI } from '../../i18n';
+
+interface Props {
+  project: Project;
+  lang: Locale;
+}
+
+const { project, lang } = Astro.props;
+const t = getUI(lang);
+const featured = project.featured === true;
+---
+
+<article
+  class:list={['project', featured && 'project--featured']}
+  style={`--hue: var(${project.hueVar});`}
+>
+  <div class="project__field">
+    <h3 class="project__name">{project.name}</h3>
+  </div>
+
+  <div class="project__body">
+    <p class="project__sector" data-i18n={`projects.${project.id}.sector`}>{project.sector[lang]}</p>
+    <p class="project__desc" data-i18n={`projects.${project.id}.description`}>{project.description[lang]}</p>
+
+    <ul
+      class="project__stack"
+      aria-label={t.projects.stackLabel}
+      data-i18n-attr="aria-label:projects.stackLabel"
+    >
+      {project.stack.map((item) => <li>{item}</li>)}
+    </ul>
+
+    {project.link ? (
+      <a
+        class="project__link"
+        href={project.link}
+        rel="noopener noreferrer"
+        target="_blank"
+        data-i18n="projects.view"
+      >
+        {t.projects.view}
+      </a>
+    ) : (
+      <p class="project__soon" data-i18n="projects.soon">{t.projects.soon}</p>
+    )}
+  </div>
+</article>
+
+<style>
+  .project {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .project__field {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: clamp(9rem, 20vw, 12rem);
+    padding: clamp(1.1rem, 2.6vw, 1.8rem);
+    background: var(--hue);
+    color: #fff;
+  }
+
+  .project__field::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      120deg,
+      transparent 0 20px,
+      rgba(255, 255, 255, 0.07) 20px 21px
+    );
+    pointer-events: none;
+  }
+
+  .project__name {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    color: #fff;
+    font-size: var(--text-h3);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .project__body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.7rem;
+    padding: clamp(1.1rem, 2.6vw, 1.7rem);
+  }
+
+  .project__sector {
+    margin: 0;
+    color: var(--hue);
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  .project__desc {
+    margin: 0;
+    color: var(--muted);
+    max-width: 52ch;
+  }
+
+  .project__stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 0.4rem;
+    list-style: none;
+  }
+
+  .project__stack li {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-tag);
+    color: var(--ink);
+  }
+
+  .project__soon {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-small);
+  }
+
+  .project__link {
+    align-self: flex-start;
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  /* Featured: a larger, horizontal card — deliberately different from the grid. */
+  .project--featured .project__field {
+    min-height: clamp(13rem, 26vw, 17rem);
+  }
+
+  .project--featured .project__name {
+    font-size: var(--text-h1);
+  }
+
+  @media (min-width: 900px) {
+    .project--featured {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+    }
+
+    .project--featured .project__field {
+      min-height: 100%;
+    }
+
+    .project--featured .project__body {
+      justify-content: center;
+      padding: clamp(1.5rem, 3vw, 2.5rem);
+    }
+  }
+</style>

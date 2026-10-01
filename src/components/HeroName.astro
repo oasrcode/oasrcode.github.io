@@ -1,0 +1,86 @@
+---
+/**
+ * HeroName.astro — the hero's name as the client's animated signature SVG.
+ *
+ * `assets/signature/firma_animada.svg` is used AS AUTHORED and inlined into the
+ * DOM (never an `<img>`): its internal `<defs>`, per-stroke `<mask>`s and its
+ * `.recorrido` CSS animation only work inline. The authored `viewBox`, the 14
+ * letter groups, the 30 `trazo-NN` open paths, the masks and the animation
+ * delays/durations (the authored timeline is scaled to a third, so the visible
+ * total is `data-duration="3.387"`) are untouched, and the ink stays `#000000`
+ * exactly as provided.
+ *
+ * The only changes to the source are on the root element, for inline +
+ * accessible embedding:
+ *   - `role="img"` -> `role="presentation"` plus `aria-hidden="true"` and
+ *     `focusable="false"`, so the decorative SVG is not announced twice (the
+ *     real name lives in the visually-hidden <span> below);
+ *   - the now-meaningless `aria-labelledby="titulo descripcion"` is dropped
+ *     (it points at <title>/<desc> that an aria-hidden graphic must not expose);
+ *   - the fixed `width`/`height` attributes are dropped so CSS can size it
+ *     responsively off the viewBox aspect ratio (2048:682, ~3:1).
+ *
+ * The animation is pure CSS and runs on load without JS; it already handles
+ * `prefers-reduced-motion: reduce` (fully-drawn static signature).
+ *
+ * Accessibility: the real text "Aythami Santana" stays in a visually-hidden
+ * node inside the <h1> landmark.
+ */
+import rawSignature from '../../assets/signature/firma_animada.svg?raw';
+
+interface Props {
+  /** Full name, for the accessible text node. */
+  name: string;
+}
+
+const { name } = Astro.props;
+
+// Root-only attribute adjustment (see the note above). The authored animation,
+// colours and geometry are copied through byte-for-byte.
+const inlineSignature = rawSignature
+  .replace('role="img"', 'role="presentation" aria-hidden="true" focusable="false"')
+  .replace(/\saria-labelledby="titulo descripcion"/, '')
+  .replace(/\swidth="2048"\sheight="682"/, '');
+---
+
+<h1 class="hero__name" id="hero-name">
+  <span class="hero__name-sr">{name}</span>
+  <Fragment set:html={inlineSignature} />
+</h1>
+
+<style>
+  .hero__name {
+    /* Full-column width so the SVG's `min(100%, …)` resolves against a
+       definite box (the <h1> is a shrink-to-fit flex item otherwise). */
+    width: 100%;
+    margin: 0;
+    /* The SVG carries the look; keep the h1 from imposing display metrics. */
+    line-height: 0;
+    color: var(--ink);
+  }
+
+  /* Real text for assistive tech / SEO; the SVG is the visible treatment. */
+  .hero__name-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* The client SVG is injected as-is (its nodes carry no scope attribute), so
+     the root is targeted globally. Scales to the hero up to a display-type
+     size, then clamps to the column: never overflows at 360 or 1280. */
+  .hero__name :global(svg) {
+    display: block;
+    width: min(100%, calc(var(--text-display) * 7));
+    height: auto;
+    /* viewBox 2048:682 supplies the ratio; stated explicitly so the height is
+       correct even where `height: auto` is not inferred from the viewBox. */
+    aspect-ratio: 2048 / 682;
+  }
+</style>

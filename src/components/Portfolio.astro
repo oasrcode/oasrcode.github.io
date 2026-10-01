@@ -1,0 +1,149 @@
+---
+import type { Locale } from '../data/content';
+import { projects, profile } from '../data/content';
+import { getUI } from '../i18n';
+import Section from './ui/Section.astro';
+import ProjectCard from './ui/ProjectCard.astro';
+import Button from './ui/Button.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = getUI(lang);
+
+// The pinned horizontal gallery only earns its pin with two or more projects
+// (one card can't scroll horizontally). Below that the section stays simple:
+// a plain card for a single project, or an honest empty state for none.
+const hasGallery = projects.length >= 2;
+const singleProject = projects.length === 1 ? projects[0] : null;
+---
+
+<!--
+  Portfolio body. The pinned horizontal gallery (below) is only rendered with
+  two or more projects: the wrapper is the ScrollTrigger pin target and the
+  track translates on X. Both the pin and the horizontal layout are gated on
+  `html.js-motion`, so no-JS and reduced-motion visitors get a simple vertical
+  stack of the same cards (nothing is clipped or unreachable).
+-->
+<Section id="work" title={t.sections.portfolio} i18nKey="sections.portfolio">
+  {hasGallery ? (
+    <div class="projects-pin" data-pin>
+      <div class="projects-pin__track" data-pin-track>
+        {projects.map((project) => (
+          <div class="pin-card" data-pin-card>
+            <ProjectCard project={project} lang={lang} />
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : singleProject ? (
+    <div class="projects-single">
+      <ProjectCard project={singleProject} lang={lang} />
+    </div>
+  ) : (
+    <div class="portfolio-empty">
+      <p class="portfolio-empty__lead" data-i18n="projects.emptyLead">{t.projects.emptyLead}</p>
+      <Button
+        href={profile.github}
+        variant="secondary"
+        external
+        label={t.projects.emptyCtaAria}
+        i18nKey="projects.emptyCta"
+        i18nAriaKey="projects.emptyCtaAria"
+      >
+        {t.projects.emptyCta}
+      </Button>
+    </div>
+  )}
+</Section>
+
+<style>
+  /* Single project — the same card, in the plain vertical layout. */
+  .projects-single {
+    max-width: 44rem;
+  }
+
+  /* Honest empty state — a contained, intentional panel, never a fake card. */
+  .portfolio-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(1.25rem, 3vw, 1.75rem);
+    max-width: 44rem;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+
+  .portfolio-empty__lead {
+    margin: 0;
+    max-width: 46ch;
+    font-size: var(--text-lead);
+    line-height: var(--leading-body);
+    color: var(--ink);
+  }
+
+  .projects-pin__track {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+  }
+
+  .pin-card {
+    display: flex;
+    min-width: 0;
+  }
+
+  @media (min-width: 769px) {
+    /* Horizontal, pinned gallery — only once the motion system has booted. */
+    :global(html.js-motion) .projects-pin {
+      display: flex;
+      align-items: center;
+      min-height: clamp(30rem, 80vh, 44rem);
+      overflow: hidden;
+    }
+
+    :global(html.js-motion) .projects-pin__track {
+      flex-direction: row;
+      align-items: stretch;
+      width: max-content;
+      gap: clamp(1rem, 2vw, 1.5rem);
+      will-change: transform;
+    }
+
+    :global(html.js-motion) .pin-card {
+      flex: 0 0 auto;
+      width: clamp(19rem, 40vw, 32rem);
+      /* Content-driven height (no clipping) with a uniform floor; the track's
+         stretch makes every card match the tallest. */
+      min-height: clamp(22rem, 52vh, 30rem);
+    }
+
+    :global(html.js-motion) .pin-card :global(.project) {
+      height: 100%;
+    }
+
+    /* A strip card is narrow even on a wide viewport, so neutralise the
+       viewport-based featured split for legibility inside the track. */
+    :global(html.js-motion) .pin-card :global(.project--featured) {
+      display: flex;
+      grid-template-columns: none;
+    }
+
+    :global(html.js-motion) .pin-card :global(.project--featured .project__field) {
+      min-height: clamp(8rem, 16vw, 11rem);
+    }
+
+    :global(html.js-motion) .pin-card :global(.project--featured .project__name) {
+      font-size: var(--text-h3);
+    }
+
+    :global(html.js-motion) .pin-card :global(.project--featured .project__body) {
+      justify-content: flex-start;
+      padding: clamp(1.1rem, 2.6vw, 1.7rem);
+    }
+  }
+</style>

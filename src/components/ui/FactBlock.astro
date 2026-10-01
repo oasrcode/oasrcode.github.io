@@ -1,0 +1,85 @@
+---
+interface FactItem {
+  lead: string;
+  meta: string;
+  /** Optional i18n keys (swapped client-side). */
+  leadKey?: string;
+  metaKey?: string;
+}
+
+interface Props {
+  title: string;
+  titleKey?: string;
+  items: FactItem[];
+}
+
+const { title, titleKey, items } = Astro.props;
+---
+
+<!--
+  Dossier block — one grouped fact list in the About aside.
+  [data-dossier-item] opts into the one-time stagger; [data-dossier-rule] is the
+  hairline separator, drawn (scaleX) rather than static. Both fall back to the
+  final visible state with no JS or under reduced motion.
+-->
+<div class="fact" data-dossier-item>
+  <h3 class="fact__title">
+    <span class="fact__label" data-i18n={titleKey}>{title}</span>
+    <span class="fact__rule" data-dossier-rule aria-hidden="true"></span>
+  </h3>
+
+  <ul class="fact__list">
+    {items.map((item) => (
+      <li>
+        <span class="fact__lead" data-i18n={item.leadKey}>{item.lead}</span>
+        <span class="fact__meta" data-i18n={item.metaKey}>{item.meta}</span>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .fact__title {
+    position: relative;
+    margin: 0;
+    padding-bottom: 0.5rem;
+    font-size: var(--text-small);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--muted-2);
+  }
+
+  /* Drawn hairline separator (was a static border-bottom). */
+  .fact__rule {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--line);
+    transform-origin: left center;
+  }
+
+  .fact__list {
+    display: grid;
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fact__list li {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .fact__lead {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .fact__meta {
+    font-size: var(--text-small);
+    color: var(--muted-2);
+  }
+</style>

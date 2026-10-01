@@ -1,0 +1,401 @@
+---
+import type { Locale } from '../data/content';
+import { profile } from '../data/content';
+import { getUI } from '../i18n';
+import Button from './ui/Button.astro';
+import HeroName from './HeroName.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = getUI(lang);
+---
+
+<section class="hero" data-hero aria-labelledby="hero-name">
+  <!--
+    Motion bootstrap — runs before the hero markup is parsed so the entrance
+    starts hidden without a flash. Skipped under reduced motion; a failsafe
+    removes the hidden state if the bundled script never boots.
+  -->
+  <script is:inline>
+    (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return;
+      var root = document.documentElement;
+      root.classList.add('js-motion');
+      window.__homeMotionReady = false;
+      window.setTimeout(function () {
+        if (!window.__homeMotionReady) root.classList.remove('js-motion');
+      }, 4000);
+    })();
+  </script>
+
+  <!--
+    Decorative background field. The hairline grid stays as structure; the
+    canvas is a small set of "travellers" that walk the grid lines, turning at
+    intersections and drawing a spark -> trigger comet trail. The canvas lives
+    inside the grid layer so it shares the grid's cell size and transform, which
+    keeps every line exactly on the grid. Both are decoration only: clipped by
+    the hero, `pointer-events: none`, and invisible to assistive tech.
+  -->
+  <div class="hero__deco" data-hero-deco data-parallax aria-hidden="true">
+    <div class="hero__layer hero__layer--grid" data-hero-grid data-speed="0.2">
+      <canvas class="hero__trace" data-hero-trace aria-hidden="true"></canvas>
+    </div>
+  </div>
+
+  <div class="hero__inner container">
+    <HeroName name={profile.name} />
+
+    <p class="hero__role" data-hero-fade>
+      <span data-i18n="profile.role">{profile.role[lang]}</span>
+      <span class="hero__sep" aria-hidden="true">·</span>
+      <span class="hero__location" data-i18n="profile.location">{profile.location[lang]}</span>
+    </p>
+    <p
+      class="hero__value"
+      data-hero-fade
+      aria-label={t.hero.valuePropAria}
+      data-i18n="profile.valueProp"
+      data-i18n-attr="aria-label:hero.valuePropAria"
+    >
+      {profile.valueProp[lang]}
+    </p>
+
+    <div class="hero__actions" data-hero-fade>
+      <Button
+        href={profile.linkedin}
+        variant="primary"
+        external
+        label={t.hero.linkedinAria}
+        magnetic
+        i18nKey="hero.linkedin"
+        i18nAriaKey="hero.linkedinAria"
+      >
+        {t.hero.linkedin}
+      </Button>
+      <Button
+        href={profile.github}
+        variant="secondary"
+        external
+        label={t.hero.githubAria}
+        magnetic
+        i18nKey="hero.github"
+        i18nAriaKey="hero.githubAria"
+      >
+        {t.hero.github}
+      </Button>
+    </div>
+  </div>
+
+  <!--
+    Scroll cue — a "traveller" walking down the hero: a hairline track carrying a
+    --spark -> --trigger gradient stroke that draws top-to-bottom in a loop,
+    led by a small trigger dot that fades at the foot. Same visual language as
+    the grid travellers and the timeline rail. Decoration only (aria-hidden):
+    the content below is reached by ordinary scrolling, so it carries no label
+    and is hidden from assistive tech. The loop is skipped under reduced motion,
+    where the gradient line simply rests fully drawn.
+  -->
+  <div class="hero__cue" data-hero-cue aria-hidden="true">
+    <svg
+      class="hero__cue-svg"
+      viewBox="0 0 12 48"
+      width="12"
+      height="48"
+      fill="none"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <defs>
+        <linearGradient id="hero-cue-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop class="hero__cue-stop-a" offset="0" />
+          <stop class="hero__cue-stop-b" offset="1" />
+        </linearGradient>
+      </defs>
+      <line class="hero__cue-track" x1="6" y1="2" x2="6" y2="46" pathLength="1" />
+      <line
+        class="hero__cue-stroke"
+        x1="6"
+        y1="2"
+        x2="6"
+        y2="46"
+        pathLength="1"
+        stroke="url(#hero-cue-gradient)"
+      />
+      <circle class="hero__cue-dot" cx="6" cy="2" r="2.6" />
+    </svg>
+  </div>
+</section>
+
+<script>
+  import { initHomeMotion } from '../lib/motion/home';
+
+  // Boots only when the inline bootstrap marked the document motion-ready —
+  // i.e. not under reduced motion and not when JS failed earlier.
+  if (document.documentElement.classList.contains('js-motion')) {
+    initHomeMotion();
+  } else {
+    window.__homeMotionReady = true;
+  }
+</script>
+
+<style is:global>
+  /* --- Lenis (Home only) ---------------------------------------------- */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  /* --- JS-driven initial state ---------------------------------------- */
+  /* Applied only when the bootstrap marked the document motion-ready, so
+     no-JS and reduced-motion users see the finished hero immediately. */
+  html.js-motion [data-hero-fade] {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.js-motion [data-hero-fade] {
+      opacity: 1 !important;
+    }
+  }
+</style>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--base);
+    /* First screen: hero + the fixed nav's reserved band = 100svh. `svh` keeps
+       the fold honest on mobile as the browser bars show/hide; the `vh` line is
+       the fallback. `--nav-clearance` is the same band the nav reserves at the
+       top of <body>, so the two always agree. */
+    --hero-nav-offset: var(--nav-clearance, 5.25rem);
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--hero-nav-offset));
+    min-height: calc(100svh - var(--hero-nav-offset));
+    /* The deeper bottom padding reserves the cue's lane, so the centered
+       content can never collide with it. */
+    padding-block: clamp(2.5rem, 6vh, 4.5rem) clamp(4.75rem, 11vh, 7.5rem);
+  }
+
+  /* Decorative background field. The grid drifts on scroll (transform) and the
+     canvas is painted by the motion layer. Clipped by the hero, so neither can
+     shift layout or add scroll. */
+  .hero__deco {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    /* Room for the cursor-driven tilt on the grid. */
+    perspective: 900px;
+  }
+
+  /* The wandering grid traces. The canvas sits inside the grid layer, so its
+     origin and cell match the background lines exactly; it is transparent
+     without JS / under reduced motion. Decoration only. */
+  .hero__trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hero__layer {
+    position: absolute;
+    will-change: transform;
+  }
+
+  /* Hairline blueprint grid — structure, not decoration. Fades out before the
+     content ends so it never competes with the copy. Oversized on Y so the
+     parallax drift never exposes an edge. The cell size is a single source of
+     truth the trace canvas reads from to stay grid-aligned. */
+  .hero__layer--grid {
+    inset: -12% -4%;
+    --grid-line: color-mix(in srgb, var(--line) 65%, transparent);
+    --hero-grid-cell: clamp(3.5rem, 7vw, 5.5rem);
+    background-image:
+      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+    background-size: var(--hero-grid-cell) var(--hero-grid-cell);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
+  }
+
+  .hero__inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Centered, biased upward by the deeper bottom padding: the signature sits
+       in the upper-middle, role/value/CTAs below it, cue pinned at the foot. */
+    justify-content: center;
+    gap: clamp(1.25rem, 2.6vw, 1.9rem);
+  }
+
+  .hero__role {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lead);
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  /* Location rides the role line, separated by a middot. The separator and the
+     place are set quieter than the role so the role still leads. */
+  .hero__sep {
+    margin-inline: 0.5rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .hero__location {
+    color: var(--muted-2);
+    font-weight: 500;
+  }
+
+  .hero__value {
+    margin: 0;
+    max-width: 48ch;
+    font-size: var(--text-lead);
+    line-height: 1.45;
+    color: var(--muted-2);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: clamp(0.25rem, 1.5vw, 0.75rem);
+  }
+
+  /* --- Scroll cue -------------------------------------------------------- */
+  /* Bottom-centre, inside the reserved padding lane. Sized to hint, not to
+     decorate: a 48px hairline with a gradient stroke that draws downward. */
+  .hero__cue {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(0.85rem, 2.8vh, 1.75rem);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .hero__cue-svg {
+    display: block;
+    width: 12px;
+    height: 48px;
+  }
+
+  .hero__cue-stop-a {
+    stop-color: var(--spark);
+  }
+
+  .hero__cue-stop-b {
+    stop-color: var(--trigger);
+  }
+
+  .hero__cue-track {
+    stroke: var(--line);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+  }
+
+  /* The gradient stroke is the traveller's trail. Base state = hidden + not
+     drawn; the loop lives behind a no-preference query so reduced motion gets
+     the static, fully-drawn state below rather than a one-frame flash. */
+  .hero__cue-stroke {
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+
+  .hero__cue-dot {
+    fill: var(--trigger);
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__cue-stroke {
+      opacity: 1;
+      animation: hero-cue-draw 2600ms linear infinite both;
+    }
+
+    .hero__cue-dot {
+      animation: hero-cue-dot 2600ms linear infinite both;
+    }
+  }
+
+  /* Draw top -> down, hold, then reset invisibly so the loop never rewinds. */
+  @keyframes hero-cue-draw {
+    0% {
+      stroke-dashoffset: 1;
+      opacity: 1;
+    }
+    55% {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+    78% {
+      stroke-dashoffset: 0;
+      opacity: 0;
+    }
+    79% {
+      stroke-dashoffset: 1;
+      opacity: 0;
+    }
+    100% {
+      stroke-dashoffset: 1;
+      opacity: 0;
+    }
+  }
+
+  /* The head: rides the leading edge, fades at the foot, resets hidden. */
+  @keyframes hero-cue-dot {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    55% {
+      transform: translateY(44px);
+      opacity: 1;
+    }
+    78% {
+      transform: translateY(44px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(44px);
+      opacity: 0;
+    }
+  }
+
+  /* Reduced motion / no JS: no loop — the gradient line rests fully drawn as a
+     static hint. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__cue-stroke {
+      stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+</style>

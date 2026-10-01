@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+design-system/
+
+# --- Astro / npm build outputs ---
+dist/
+node_modules/
+.astro/
+*.log
+
+# --- Local tooling ---
+.playwright-mcp/
+.opencode/handoff.local.md

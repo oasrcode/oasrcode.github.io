@@ -1,0 +1,68 @@
+---
+import type { Locale } from '../data/content';
+import { skillGroups } from '../data/content';
+import { getUI } from '../i18n';
+import Section from './ui/Section.astro';
+import Tag from './ui/Tag.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = getUI(lang);
+
+const years = (from?: string, to?: string) =>
+  from ? `${from}–${to ?? t.skills.present}` : undefined;
+---
+
+<Section id="skills" title={t.sections.skills} i18nKey="sections.skills">
+  <div class="skills" data-stagger>
+    {skillGroups.map((group) => (
+      <div class="skill-group">
+        <h3 class="skill-group__title" data-i18n={`skillGroups.${group.id}.title`}>
+          {group.title[lang]}
+        </h3>
+        <ul class="skill-group__list">
+          {group.skills.map((skill, i) => (
+            <Tag
+              label={skill.name}
+              years={years(skill.from, skill.to)}
+              yearsKey={skill.from ? `skillGroups.${group.id}.skills.${i}.years` : undefined}
+              stagger
+            />
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</Section>
+
+<style>
+  .skills {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.75rem, 4vw, 3rem) clamp(2rem, 6vw, 5rem);
+  }
+
+  .skill-group__title {
+    margin: 0 0 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+    font-size: var(--text-h3);
+    font-weight: 800;
+  }
+
+  .skill-group__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    list-style: none;
+  }
+
+  @media (max-width: 620px) {
+    .skills {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+interface Props {
+  label: string;
+  /** Optional year range shown after the name, e.g. "2023–now". */
+  years?: string;
+  /** Opt into the one-time staggered reveal on the Home skills grid. */
+  stagger?: boolean;
+  /** i18n key for the year range (swapped client-side). */
+  yearsKey?: string;
+}
+
+const { label, years, stagger = false, yearsKey } = Astro.props;
+---
+
+<li class="tag" data-stagger-item={stagger ? '' : undefined}>
+  <span class="tag__name">{label}</span>
+  {years && <span class="tag__years" data-i18n={yearsKey}>{years}</span>}
+</li>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.32rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    font-family: var(--font-mono);
+    font-size: var(--text-tag);
+    line-height: 1.4;
+    color: var(--ink);
+  }
+
+  .tag__years {
+    color: var(--muted);
+    font-size: 0.85em;
+  }
+</style>

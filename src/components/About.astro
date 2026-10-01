@@ -1,0 +1,118 @@
+---
+import type { Locale } from '../data/content';
+import { about, education, languages } from '../data/content';
+import { getUI } from '../i18n';
+import Section from './ui/Section.astro';
+import PullQuote from './ui/PullQuote.astro';
+import FactBlock from './ui/FactBlock.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = getUI(lang);
+
+const { body, manifesto } = about;
+
+// Education / languages share one shape for the dossier blocks: a bold lead
+// line and a muted detail line. Facts are unchanged — only re-keyed. The place
+// and period are locale-independent, so only the title/name/detail carry a key.
+const facts = [
+  {
+    title: t.sections.education,
+    titleKey: 'sections.education',
+    items: education.map((e, i) => ({
+      lead: e.title[lang],
+      meta: `${e.place}, ${e.period}`,
+      leadKey: `education.${i}.title`,
+    })),
+  },
+  {
+    title: t.sections.languages,
+    titleKey: 'sections.languages',
+    items: languages.map((l, i) => ({
+      lead: l.name[lang],
+      meta: l.detail[lang],
+      leadKey: `languages.${i}.name`,
+      metaKey: `languages.${i}.detail`,
+    })),
+  },
+];
+---
+
+<Section id="about" title={t.sections.about} i18nKey="sections.about">
+  <div class="about">
+    <div class="about__story">
+      <PullQuote
+        lead={manifesto[lang].lead}
+        accent={manifesto[lang].accent}
+        tail={manifesto[lang].tail}
+        leadKey="about.manifesto.lead"
+        accentKey="about.manifesto.accent"
+        tailKey="about.manifesto.tail"
+      />
+
+      <div class="about__body">
+        {body[lang].map((p, i) => <p data-i18n={`about.body.${i}`}>{p}</p>)}
+      </div>
+    </div>
+
+    <aside class="about__facts" data-dossier>
+      {facts.map((fact) => (
+        <FactBlock title={fact.title} titleKey={fact.titleKey} items={fact.items} />
+      ))}
+    </aside>
+  </div>
+</Section>
+
+<style>
+  .about {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: clamp(2rem, 6vw, 5rem);
+    align-items: start;
+  }
+
+  /* The story column stacks the pull-quote above the supporting body. It stays
+     taller than the dossier, which is what makes the sticky aside meaningful. */
+  .about__story {
+    display: grid;
+    gap: clamp(1.75rem, 4vw, 3rem);
+  }
+
+  .about__body {
+    display: grid;
+    gap: 1rem;
+    max-width: 62ch;
+  }
+
+  .about__body p {
+    margin: 0;
+    color: var(--muted-2);
+  }
+
+  .about__facts {
+    display: grid;
+    gap: 1.75rem;
+    padding-top: 0.25rem;
+  }
+
+  /* Desktop: the dossier stays in view while the story scrolls past it.
+     `top` clears the fixed nav's reserved band (`--nav-clearance` = bar height
+     + inset, sized for the detached/tallest state) plus a small breathing gap,
+     so the first block is never painted behind the nav. */
+  @media (min-width: 761px) {
+    .about__facts {
+      position: sticky;
+      top: calc(var(--nav-clearance, 5.25rem) + 1rem);
+    }
+  }
+
+  /* Mobile / tablet: the aside stacks beneath the body, no sticky. */
+  @media (max-width: 760px) {
+    .about {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

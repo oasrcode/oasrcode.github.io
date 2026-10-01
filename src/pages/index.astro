@@ -1,0 +1,37 @@
+---
+import '../styles/home-motion.css';
+import { getUI } from '../i18n';
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Experience from '../components/Experience.astro';
+import Portfolio from '../components/Portfolio.astro';
+import Skills from '../components/Skills.astro';
+import Footer from '../components/Footer.astro';
+
+// Single canonical URL. Spanish is server-rendered; the client switcher swaps
+// every [data-i18n] node in place (no navigation, no reload, no URL change).
+const lang = 'es' as const;
+const t = getUI(lang);
+---
+
+<Base
+  lang={lang}
+  title={t.meta.title}
+  description={t.meta.description}
+  path="/"
+  titleKey="meta.title"
+  descriptionKey="meta.description"
+>
+  <Nav lang={lang} />
+  <main id="main">
+    <Hero lang={lang} />
+    <About lang={lang} />
+    <Experience lang={lang} />
+    <Portfolio lang={lang} />
+    <Skills lang={lang} />
+  </main>
+  <Footer lang={lang} />
+  <div class="motion-cursor" data-cursor aria-hidden="true"></div>
+</Base>

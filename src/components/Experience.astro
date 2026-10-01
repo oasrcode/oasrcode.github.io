@@ -1,0 +1,186 @@
+---
+import type { Locale } from '../data/content';
+import { experience } from '../data/content';
+import { getUI } from '../i18n';
+import Section from './ui/Section.astro';
+import TimelineItem from './ui/TimelineItem.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = getUI(lang);
+---
+
+<Section id="experience" title={t.sections.experience} i18nKey="sections.experience">
+  <!-- Chronology: the only place numbered markers are justified.
+       The rail is a faint hairline track; a gradient stroke (spark -> trigger)
+       draws over it with scroll progress, led by a glowing head that lights
+       each entry's node as it passes. All of it is decoration — the list below
+       carries the real content and is always visible. -->
+  <div class="timeline-wrap" data-timeline>
+    <svg
+      class="timeline-rail"
+      viewBox="0 0 2 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <!-- userSpaceOnUse: the path is a zero-width vertical line, so an
+             objectBoundingBox gradient would collapse. -->
+        <linearGradient
+          id="tl-rail-gradient"
+          class="timeline-rail__grad"
+          gradientUnits="userSpaceOnUse"
+          x1="1"
+          y1="0"
+          x2="1"
+          y2="100"
+        >
+          <stop class="tl-stop tl-stop--a" offset="0" />
+          <stop class="tl-stop tl-stop--b" offset="1" />
+        </linearGradient>
+
+        <!-- Horizontal-only blur: the viewBox is 1:1 on X, so a 3-unit
+             stdDeviation reads as a 3px halo and never smears the line. -->
+        <filter
+          id="tl-rail-glow"
+          filterUnits="userSpaceOnUse"
+          x="-18"
+          y="-3"
+          width="36"
+          height="106"
+        >
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3 0" result="tl-rail-blur" />
+          <feMerge>
+            <feMergeNode in="tl-rail-blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      <path class="timeline-rail__track" d="M1 0 V100" />
+      <path
+        class="timeline-rail__lit"
+        data-rail-lit
+        d="M1 0 V100"
+        stroke="url(#tl-rail-gradient)"
+      />
+    </svg>
+
+    <!-- Traveling comet head; positioned by transform, driven by scroll. -->
+    <span class="timeline-head" data-rail-head aria-hidden="true"></span>
+
+    <ol class="timeline">
+      {experience.map((item, i) => (
+        <TimelineItem item={item} number={String(i + 1).padStart(2, '0')} lang={lang} />
+      ))}
+    </ol>
+  </div>
+</Section>
+
+<style>
+  .timeline-wrap {
+    position: relative;
+    --tl-num: clamp(2.5rem, 7vw, 4.5rem);
+    --tl-gap: clamp(1rem, 3vw, 2rem);
+    /* X of the rail's left edge; the 2px viewport means its centre sits +1px. */
+    --tl-rail-x: calc(var(--tl-num) + var(--tl-gap));
+    --tl-head-size: 12px;
+  }
+
+  /* Positioned over the body's left edge. Its `viewBox` is 2 user units wide,
+     so stroke-width maps 1:1 to screen pixels and the 100-unit height means the
+     vertical draw maps 1:1 to the rail. `overflow: visible` lets the glow filter
+     bleed past the 2px viewport. */
+  .timeline-rail {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--tl-rail-x);
+    width: 2px;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  /* The faint, always-present track gives the rail structure before it lights. */
+  .timeline-rail__track {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+
+  /* The lit stroke: gradient + soft glow + rounded tip. Drawn by the effect.
+     A hair thicker than the 1px track so the "energised" state reads clearly. */
+  .timeline-rail__lit {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    filter: url(#tl-rail-glow);
+  }
+
+  .timeline-rail__grad .tl-stop--a {
+    stop-color: var(--spark);
+  }
+
+  .timeline-rail__grad .tl-stop--b {
+    stop-color: var(--trigger);
+  }
+
+  /* Comet head: a hot core with a blue halo and a fading tail trailing up. */
+  .timeline-head {
+    position: absolute;
+    top: 0;
+    left: calc(var(--tl-rail-x) + 1px);
+    width: var(--tl-head-size);
+    height: var(--tl-head-size);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 3;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;
+    background: radial-gradient(
+      circle at 50% 42%,
+      #ffffff 0%,
+      var(--trigger) 44%,
+      color-mix(in srgb, var(--spark) 88%, var(--trigger)) 100%
+    );
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--spark) 16%, transparent),
+      0 0 12px 2px color-mix(in srgb, var(--spark) 55%, transparent),
+      0 0 22px 7px color-mix(in srgb, var(--trigger) 20%, transparent);
+  }
+
+  .timeline-head::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    width: 2px;
+    height: clamp(24px, 6vw, 48px);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--spark) 60%, transparent),
+      color-mix(in srgb, var(--trigger) 20%, transparent) 45%,
+      transparent
+    );
+  }
+
+  .timeline {
+    display: grid;
+    gap: clamp(2.25rem, 5vw, 3.75rem);
+    list-style: none;
+  }
+
+  @media (max-width: 480px) {
+    .timeline-wrap {
+      --tl-head-size: 9px;
+    }
+  }
+</style>

@@ -1,0 +1,100 @@
+---
+import type { Locale } from '../data/content';
+import { profile } from '../data/content';
+import { getUI } from '../i18n';
+import { hasCv } from '../lib/cv';
+import CvDownload from './ui/CvDownload.astro';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang = 'es' } = Astro.props;
+const t = getUI(lang);
+
+const year = new Date().getFullYear();
+---
+
+<!--
+  Minimal footer: copyright on the left, the two social profiles (and the CV
+  download when public/cv.pdf exists) on the right. No contact block: the only
+  channels are LinkedIn and GitHub, and the hero already carries the primary
+  CTAs.
+-->
+<footer class="site-footer">
+  <div class="container site-footer__row">
+    <p class="site-footer__credit">
+      © {year} {profile.name}. <span data-i18n="footer.rights">{t.footer.rights}</span>
+    </p>
+
+    <div class="site-footer__meta">
+      <nav
+        class="site-footer__links"
+        aria-label={t.footer.socials}
+        data-i18n-attr="aria-label:footer.socials"
+      >
+        <a
+          href={profile.linkedin}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="footer.linkedin">{t.footer.linkedin}</a
+        >
+        <a
+          href={profile.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-i18n="footer.github">{t.footer.github}</a
+        >
+      </nav>
+      {hasCv && <CvDownload lang={lang} />}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--line);
+    padding-block: clamp(1.5rem, 4vw, 2.25rem);
+    background: var(--surface);
+  }
+
+  .site-footer__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .site-footer__credit {
+    margin: 0;
+    color: var(--muted);
+    font-size: var(--text-small);
+  }
+
+  .site-footer__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+  }
+
+  .site-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+  }
+
+  .site-footer__links a {
+    color: var(--ink);
+    font-size: var(--text-small);
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .site-footer__links a:hover {
+    color: var(--spark);
+  }
+</style>

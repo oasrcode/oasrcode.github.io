@@ -1,0 +1,72 @@
+---
+interface Props {
+  /** Statement before the accented phrase. */
+  lead: string;
+  /** Phrase the signature gradient bar is drawn under. */
+  accent: string;
+  /** Statement after the accented phrase. */
+  tail: string;
+  /** i18n keys for the three parts (swapped client-side). */
+  leadKey?: string;
+  accentKey?: string;
+  tailKey?: string;
+}
+
+const { lead, accent, tail, leadKey, accentKey, tailKey } = Astro.props;
+---
+
+<!--
+  About pull-quote — the section's display statement.
+
+  The whole line is masked open by the shared [data-wipe] effect over scroll.
+  The accented phrase carries the site's signature gradient bar
+  (--spark → --trigger, the same motif as the timeline rail), drawn on
+  reveal by [data-quote-bar]. The accent is a nowrap inline, so the bar spans
+  exactly the phrase while punctuation still keeps to it.
+
+  Each text part is its own span so the client language switcher can swap it in
+  place without touching the gradient bar.
+
+  No-JS / reduced motion: no [data-wipe] clip and the bar renders at its final
+  drawn state, so the statement is always fully visible.
+-->
+<p class="manifesto__quote" data-wipe><span data-i18n={leadKey}>{lead}</span><span class="manifesto__accent"><span data-i18n={accentKey}>{accent}</span><span class="manifesto__bar" data-quote-bar aria-hidden="true"></span></span><span data-i18n={tailKey}>{tail}</span></p>
+
+<style>
+  .manifesto__quote {
+    /* Display scale, bounded so the statement never forces horizontal scroll
+       and the accented phrase always fits on one line — down to 320px in both
+       locales (EN's "useful, visual applications" is the wider phrase). */
+    --manifesto-size: clamp(1.6rem, 0.95rem + 3.2vw, 4rem);
+
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--manifesto-size);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+
+  /* Nowrap inline: the phrase never breaks internally, yet it stays a normal
+     inline (not atomic), so trailing punctuation keeps to it and never starts
+     a line. The relatively-positioned inline box is the bar's containing
+     block, so the bar spans exactly the phrase. */
+  .manifesto__accent {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .manifesto__bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.07em;
+    height: clamp(5px, 0.5vw, 10px);
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--spark), var(--trigger));
+    transform-origin: left center;
+    pointer-events: none;
+  }
+</style>

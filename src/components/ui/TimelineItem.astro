@@ -1,0 +1,201 @@
+---
+import type { ExperienceItem, Locale } from '../../data/content';
+import { getUI } from '../../i18n';
+
+interface Props {
+  item: ExperienceItem;
+  number: string;
+  lang: Locale;
+}
+
+const { item, number, lang } = Astro.props;
+const t = getUI(lang);
+const highlights = item.highlights?.[lang];
+---
+
+<li class="tl">
+  <span class="tl__node" data-tl-node aria-hidden="true"></span>
+  <span class="tl__num" aria-hidden="true">{number}</span>
+  <div class="tl__body">
+    <h3 class="tl__company">{item.company}</h3>
+    <p class="tl__meta">
+      <span class="tl__role" data-i18n={`experience.${item.id}.role`}>{item.role[lang]}</span>
+      <span class="tl__period">
+        {item.current && <span class="tl__now" aria-hidden="true"></span>}
+        <span data-i18n={`experience.${item.id}.period`}>{item.period[lang]}</span>
+      </span>
+    </p>
+    <p class="tl__summary" data-i18n={`experience.${item.id}.summary`}>{item.summary[lang]}</p>
+
+    {highlights && (
+      <>
+        <h4 class="tl__sub" data-i18n="experience.highlightsLabel">{t.experience.highlightsLabel}</h4>
+        <ul class="tl__list">
+          {highlights.map((highlight, j) => (
+            <li data-i18n={`experience.${item.id}.highlights.${j}`}>{highlight}</li>
+          ))}
+        </ul>
+      </>
+    )}
+  </div>
+</li>
+
+<style>
+  .tl {
+    position: relative;
+    display: grid;
+    /* The rail in Experience.astro shares these vars so it lines up with the
+       body's left edge at every breakpoint. */
+    grid-template-columns: var(--tl-num, clamp(2.5rem, 7vw, 4.5rem)) 1fr;
+    gap: var(--tl-gap, clamp(1rem, 3vw, 2rem));
+  }
+
+  /* Rail node — ornamental state marker, aligned to the first line of the body.
+     Hollow (upcoming) -> lit spark (active) -> inked (passed). */
+  .tl__node {
+    position: absolute;
+    top: calc(var(--text-h3) * 0.54);
+    left: calc(
+      var(--tl-num, clamp(2.5rem, 7vw, 4.5rem)) + var(--tl-gap, clamp(1rem, 3vw, 2rem)) + 1px
+    );
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--base);
+    border: 1.5px solid color-mix(in srgb, var(--muted) 50%, transparent);
+    z-index: 2;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.82);
+    transition:
+      transform 0.4s var(--ease-out),
+      border-color 0.4s var(--ease-out),
+      background-color 0.4s var(--ease-out),
+      box-shadow 0.4s var(--ease-out);
+  }
+
+  .tl.is-reached .tl__node {
+    background: var(--spark);
+    border-color: var(--spark);
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--spark) 15%, transparent),
+      0 0 10px 1px color-mix(in srgb, var(--spark) 45%, transparent);
+  }
+
+  .tl.is-active .tl__node {
+    background: #fff;
+    border-color: var(--spark);
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--spark) 22%, transparent),
+      0 0 14px 2px color-mix(in srgb, var(--spark) 60%, transparent);
+  }
+
+  .tl.is-passed .tl__node {
+    background: color-mix(in srgb, var(--ink) 78%, transparent);
+    border-color: color-mix(in srgb, var(--ink) 78%, transparent);
+    transform: translate(-50%, -50%) scale(0.9);
+    box-shadow: none;
+  }
+
+  .tl__num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 3.4vw, 2.5rem);
+    line-height: 1;
+    color: color-mix(in srgb, var(--ink) 22%, transparent);
+    transform-origin: left bottom;
+    transition:
+      color 0.45s var(--ease-out),
+      transform 0.45s var(--ease-out);
+  }
+
+  .tl.is-reached .tl__num {
+    color: color-mix(in srgb, var(--ink) 62%, transparent);
+  }
+
+  .tl.is-active .tl__num {
+    color: var(--ink);
+    transform: translateY(-0.03em) scale(1.04);
+  }
+
+  .tl.is-passed .tl__num {
+    color: color-mix(in srgb, var(--ink) 42%, transparent);
+  }
+
+  .tl__body {
+    padding-left: clamp(1rem, 3vw, 2rem);
+  }
+
+  .tl__company {
+    margin: 0 0 0.35rem;
+    font-size: var(--text-h3);
+    font-weight: 800;
+  }
+
+  .tl__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.9rem;
+    margin: 0 0 0.9rem;
+  }
+
+  .tl__role {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .tl__period {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--muted-2);
+    font-size: var(--text-small);
+  }
+
+  .tl__now {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--signal);
+  }
+
+  .tl__summary {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink);
+  }
+
+  .tl__sub {
+    margin: 1.3rem 0 0.6rem;
+    font-size: var(--text-small);
+    font-weight: 700;
+    color: var(--muted-2);
+  }
+
+  .tl__list {
+    display: grid;
+    gap: 0.45rem;
+    max-width: 62ch;
+    padding-left: 1.1rem;
+    color: var(--muted-2);
+  }
+
+  .tl__list li::marker {
+    color: var(--spark);
+  }
+
+  /* Reduced motion: no scroll-linked states — a settled, fully-lit rail. */
+  @media (prefers-reduced-motion: reduce) {
+    .tl__node {
+      background: var(--spark);
+      border-color: var(--spark);
+      transform: translate(-50%, -50%) scale(1);
+      box-shadow: none;
+    }
+
+    .tl__num {
+      transform: none;
+    }
+  }
+</style>

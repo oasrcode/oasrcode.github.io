@@ -1,0 +1,111 @@
+---
+import '../styles/global.css';
+import type { Locale } from '../data/content';
+import { getUI, htmlLang } from '../i18n';
+
+interface Props {
+  /** Server-rendered language. Spanish is the canonical default. */
+  lang?: Locale;
+  title: string;
+  description: string;
+  /** Canonical path for this page (single URL, no locale prefix). */
+  path?: string;
+  /** i18n keys the client uses to rewrite <title> / meta description. */
+  titleKey: string;
+  descriptionKey: string;
+}
+
+const {
+  lang = 'es',
+  title,
+  description,
+  path = '/',
+  titleKey,
+  descriptionKey,
+} = Astro.props;
+const t = getUI(lang);
+
+const site = Astro.site ?? new URL('https://oasrcode.github.io');
+const canonical = new URL(path, site).href;
+---
+
+<!doctype html>
+<html
+  lang={htmlLang(lang)}
+  data-i18n-title={titleKey}
+  data-i18n-description={descriptionKey}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f3f4fb" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="canonical" href={canonical} />
+
+    <!--
+      i18n pre-paint bootstrap. Resolves the language (stored choice → browser
+      language → Spanish) and, when it differs from the server-rendered default,
+      hides the document until the client module swaps it — no flash of the
+      wrong language. A failsafe reveals the Spanish default if the module never
+      boots; with JS disabled the class is never added, so content stays visible.
+    -->
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        var lang = 'es';
+        try {
+          var saved = window.localStorage.getItem('lang');
+          if (saved === 'en' || saved === 'es') {
+            lang = saved;
+          } else {
+            var raw =
+              navigator.language || (navigator.languages && navigator.languages[0]) || '';
+            if (raw.toLowerCase().indexOf('en') === 0) lang = 'en';
+          }
+        } catch (e) {
+          /* storage unavailable — keep the Spanish default */
+        }
+        root.setAttribute('lang', lang);
+        if (lang !== 'es') {
+          root.classList.add('i18n-pending');
+          window.__i18nReady = false;
+          window.setTimeout(function () {
+            if (!window.__i18nReady) root.classList.remove('i18n-pending');
+          }, 2000);
+        }
+      })();
+    </script>
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="es_ES" />
+    <meta name="twitter:card" content="summary" />
+
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/cabinet-grotesk-900.woff2"
+      crossorigin
+    />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main" data-i18n="skipLink">{t.skipLink}</a>
+    <slot />
+
+    <script>
+      import { initI18n } from '../lib/i18n/client';
+      initI18n();
+    </script>
+  </body>
+</html>

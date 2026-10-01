@@ -1,0 +1,31 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  /** i18n key for the section heading (swapped client-side). */
+  i18nKey?: string;
+}
+
+const { id, title, i18nKey } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<section class="section" id={id} aria-labelledby={titleId}>
+  <div class="container">
+    <h2 class="section__title" id={titleId} data-wipe data-i18n={i18nKey}>{title}</h2>
+    <slot />
+  </div>
+</section>
+
+<style>
+  .section {
+    padding-block: var(--section-y);
+    border-top: 1px solid var(--line);
+  }
+
+  .section__title {
+    margin: 0 0 clamp(1.5rem, 3vw, 2.75rem);
+    font-size: var(--text-h2);
+    font-weight: 800;
+  }
+</style>
