@@ -13,20 +13,27 @@ html.js-motion [data-wipe] {
   clip-path: inset(0 100% 0 0);
 }
 
-/* Skills stagger — tags wait for their one-time reveal. */
-html.js-motion [data-stagger-item] {
+/* Skills stagger — groups wait for their one-time reveal. */
+html.js-motion [data-stagger-group] {
   opacity: 0;
 }
 
-/* Experience rail — the gradient "lit" stroke waits for the scrubbed draw so
+/* Experience rail — the solid "lit" stroke waits for the scrubbed draw so
    the rail never flashes fully lit before GSAP boots. The faint track, the
    comet head and every entry stay inert/visible without it. */
 html.js-motion [data-rail-lit] {
   opacity: 0;
 }
 
-/* About pull-quote — the signature bar waits to be drawn on reveal, after the
-   statement's mask wipe has opened. */
+/* About statement — the two authored lines wait for their one-shot,
+   line-by-line reveal. They are hidden with opacity only (never clipped), so
+   the accent phrase's absolutely-positioned bar is never masked. */
+html.js-motion [data-manifesto-line] {
+  opacity: 0;
+}
+
+/* About pull-quote — the signature bar waits to be drawn left→right on reveal,
+   once the statement lines have landed. */
 html.js-motion [data-quote-bar] {
   transform: scaleX(0);
 }
@@ -48,9 +55,35 @@ html.js-motion [data-dossier-rule] {
   }
 }
 
-/* Magnetic cursor — additive accent over the native pointer. Hidden until the
+/* Bioluminescent cursor — a small light source, not a ring. Hidden until the
    effect opts in via `html.ml-cursor-on`, so touch / reduced-motion never see
-   it. The native cursor stays visible, so nothing becomes unusable. */
+   it. The native pointer stays visible, so nothing becomes unusable.
+
+   Two stacked layers:
+     `.motion-cursor` — the luminous CORE (normal blending): a hot point that
+       stays legible on any backdrop.
+     `.motion-glow`   — the wide, soft HALO that screen-blends with the page, so
+       the content under the pointer visibly BRIGHTENS (the "illumination").
+       Screen blending can only ever lighten, and it is kept at a low alpha, so
+       it never displaces content and never washes out legibility.
+
+   Colour adapts to depth: warm (default) over the surface/hero, cyan
+   bioluminescent once the pointer is inside `.sea` (the `ml-cursor-dive` class
+   the effect toggles). Both layers are gated on `ml-cursor-on` for opacity. */
+.motion-cursor,
+.motion-glow {
+  --cursor-core: #ffce6b;      /* warm luminous core */
+  --cursor-glow: #ffaa00;      /* warm halo (= --spark, above the waterline) */
+  --cursor-glow-alpha: 0.34;   /* warm state stays subtle */
+}
+
+html.ml-cursor-dive .motion-cursor,
+html.ml-cursor-dive .motion-glow {
+  --cursor-core: #7df2e4;      /* bioluminescent core (= .sea --spark) */
+  --cursor-glow: #37c6d6;      /* cyan halo (= .sea --glow) */
+  --cursor-glow-alpha: 0.6;    /* in the dark dive the light really shows */
+}
+
 .motion-cursor {
   position: fixed;
   top: 0;
@@ -58,16 +91,59 @@ html.js-motion [data-dossier-rule] {
   z-index: 9999;
   width: 10px;
   height: 10px;
-  border: 1.5px solid var(--spark);
   border-radius: 50%;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s ease;
   will-change: transform;
+  /* Hot white point falling off to the accent, plus a tight inner bloom. */
+  background: radial-gradient(
+    circle at 50% 50%,
+    #fffdf5 0%,
+    color-mix(in srgb, var(--cursor-core) 88%, #fff) 42%,
+    var(--cursor-core) 72%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 5px 0.5px color-mix(in srgb, var(--cursor-core) 80%, transparent),
+    0 0 12px 2px color-mix(in srgb, var(--cursor-glow) 42%, transparent);
 }
 
 html.ml-cursor-on .motion-cursor {
-  opacity: 0.7;
+  opacity: 1;
+}
+
+.motion-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  /* Moderate, fixed size (not viewport-sized): the screen-blend layer only ever
+     invalidates/repaints this 240px box. */
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  /* Promoted for cheap transform; paint/layout contained so the blended
+     recomposite stays bounded to the box instead of the whole viewport. */
+  will-change: transform;
+  contain: layout paint;
+  /* Illumination: screen only BRIGHTENS, so in the dark dive the content under
+     the pointer lights up; kept at a low alpha so it never washes out text. */
+  mix-blend-mode: screen;
+  background: radial-gradient(
+    circle at 50% 50%,
+    color-mix(in srgb, var(--cursor-core) 34%, transparent) 0%,
+    color-mix(in srgb, var(--cursor-glow) 18%, transparent) 30%,
+    color-mix(in srgb, var(--cursor-glow) 7%, transparent) 55%,
+    transparent 72%
+  );
+}
+
+html.ml-cursor-on .motion-glow {
+  opacity: var(--cursor-glow-alpha);
 }
 
 /* Belt and suspenders: if reduced motion is on, force the final state even if
@@ -77,7 +153,11 @@ html.ml-cursor-on .motion-cursor {
     clip-path: none !important;
   }
 
-  html.js-motion [data-stagger-item] {
+  html.js-motion [data-manifesto-line] {
+    opacity: 1 !important;
+  }
+
+  html.js-motion [data-stagger-group] {
     opacity: 1 !important;
   }
 
@@ -105,7 +185,8 @@ html.ml-cursor-on .motion-cursor {
     display: none !important;
   }
 
-  .motion-cursor {
+  .motion-cursor,
+  .motion-glow {
     display: none !important;
   }
 }

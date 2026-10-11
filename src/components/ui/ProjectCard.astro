@@ -57,6 +57,11 @@ const featured = project.featured === true;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
+    /* Soft halo in the card's own hue bleeding into the dark water — the card
+       reads as a bioluminescent panel rather than a flat sticker. The hue sits
+       on `--hue` (its `--project-*` token is unchanged), so text contrast is
+       untouched. */
+    box-shadow: 0 0 22px -2px color-mix(in srgb, var(--hue) 26%, transparent);
   }
 
   .project__field {
@@ -65,8 +70,17 @@ const featured = project.featured === true;
     align-items: flex-end;
     min-height: clamp(9rem, 20vw, 12rem);
     padding: clamp(1.1rem, 2.6vw, 1.8rem);
-    background: var(--hue);
-    color: #fff;
+    /* A luminous highlight pooling at the top-centre fades to the bare hue at
+       the text (bottom-left) edge, so the field reads as lit from above while
+       the dark --on-spark text keeps its contrast against the unmodified hue. */
+    background:
+      radial-gradient(
+        150% 140% at 50% -15%,
+        color-mix(in srgb, #fff 22%, transparent),
+        transparent 62%
+      ),
+      var(--hue);
+    color: var(--on-spark);
   }
 
   .project__field::after {
@@ -85,7 +99,7 @@ const featured = project.featured === true;
     position: relative;
     z-index: 1;
     margin: 0;
-    color: #fff;
+    color: var(--on-spark);
     font-size: var(--text-h3);
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -101,7 +115,13 @@ const featured = project.featured === true;
 
   .project__sector {
     margin: 0;
-    color: var(--hue);
+    /* The raw hue fails AA as small text on the dark card body for the darker
+       hues (sensor 2.83:1); lifting 42% toward the light --ink keeps the hue
+       identifiable while clearing AA at every dive depth (sensor 4.86:1 at the
+       shallowest portfolio band). A faint hue glow keeps the bioluminescent
+       read without becoming a sticker. */
+    color: color-mix(in srgb, var(--hue) 58%, var(--ink));
+    text-shadow: 0 0 0.6em color-mix(in srgb, var(--hue) 22%, transparent);
     font-size: var(--text-small);
     font-weight: 500;
   }

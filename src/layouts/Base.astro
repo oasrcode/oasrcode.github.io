@@ -40,7 +40,7 @@ const canonical = new URL(path, site).href;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f3f4fb" />
+    <meta name="theme-color" content="#FFF3DC" />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="canonical" href={canonical} />
@@ -84,10 +84,21 @@ const canonical = new URL(path, site).href;
     <link rel="apple-touch-icon" href="/favicon.ico" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <!--
+      Open Graph mirrors the document shell. The server renders Spanish (the
+      crawler default — no-JS crawlers see these static values); `data-i18n-attr`
+      lets the runtime switcher rewrite content / og:locale in place when the
+      visitor picks another language, reusing the existing meta.title /
+      meta.description / meta.ogLocale dictionary keys.
+    -->
+    <meta property="og:title" content={title} data-i18n-attr="content:meta.title" />
+    <meta
+      property="og:description"
+      content={description}
+      data-i18n-attr="content:meta.description"
+    />
     <meta property="og:url" content={canonical} />
-    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale" content={t.meta.ogLocale} data-i18n-attr="content:meta.ogLocale" />
     <meta name="twitter:card" content="summary" />
 
     <link

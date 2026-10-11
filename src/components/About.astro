@@ -103,6 +103,16 @@ const facts = [
      + inset, sized for the detached/tallest state) plus a small breathing gap,
      so the first block is never painted behind the nav. */
   @media (min-width: 761px) {
+    /* The story becomes its own query container so the statement can be sized
+       from the actual column width (cqi) instead of the viewport. The column's
+       inline size is already fixed by this grid (minmax(0, 1.6fr)), so inline
+       containment does not change the layout; it only exposes the column width
+       to the pull-quote. Scoped to this breakpoint so the stacked mobile layout
+       (≤760px) is untouched. */
+    .about__story {
+      container-type: inline-size;
+    }
+
     .about__facts {
       position: sticky;
       top: calc(var(--nav-clearance, 5.25rem) + 1rem);

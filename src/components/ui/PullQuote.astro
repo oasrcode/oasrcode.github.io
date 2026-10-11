@@ -2,7 +2,7 @@
 interface Props {
   /** Statement before the accented phrase. */
   lead: string;
-  /** Phrase the signature gradient bar is drawn under. */
+  /** Phrase the signature accent bar is drawn under. */
   accent: string;
   /** Statement after the accented phrase. */
   tail: string;
@@ -18,26 +18,40 @@ const { lead, accent, tail, leadKey, accentKey, tailKey } = Astro.props;
 <!--
   About pull-quote — the section's display statement.
 
-  The whole line is masked open by the shared [data-wipe] effect over scroll.
-  The accented phrase carries the site's signature gradient bar
-  (--spark → --trigger, the same motif as the timeline rail), drawn on
-  reveal by [data-quote-bar]. The accent is a nowrap inline, so the bar spans
-  exactly the phrase while punctuation still keeps to it.
+  Authored as TWO forced visual lines ([data-manifesto-line]): the lead phrase,
+  then the accented phrase and its full stop. They are revealed line by line with
+  a small stagger by `initStatement()`; the signature bar (solid --spark, the
+  same motif as the timeline rail) then draws left→right exactly once.
+
+  Why explicit lines and not SplitText: the accented phrase is a `nowrap` inline
+  whose absolutely-positioned bar lives in its containing block and must never be
+  clipped or re-measured, and the language switcher rewrites the [data-i18n]
+  spans in place — splitting the DOM would desync both. The blocks are
+  deterministic across locales and widths, so the calibration always holds.
 
   Each text part is its own span so the client language switcher can swap it in
-  place without touching the gradient bar.
+  place without touching the accent bar.
 
-  No-JS / reduced motion: no [data-wipe] clip and the bar renders at its final
-  drawn state, so the statement is always fully visible.
+  No-JS / reduced motion: the lines carry no hidden state and the bar renders at
+  its final drawn state, so the statement is always fully visible.
 -->
-<p class="manifesto__quote" data-wipe><span data-i18n={leadKey}>{lead}</span><span class="manifesto__accent"><span data-i18n={accentKey}>{accent}</span><span class="manifesto__bar" data-quote-bar aria-hidden="true"></span></span><span data-i18n={tailKey}>{tail}</span></p>
+<p class="manifesto__quote" data-manifesto><span class="manifesto__line" data-manifesto-line><span data-i18n={leadKey}>{lead}</span></span><span class="manifesto__line" data-manifesto-line><span class="manifesto__accent"><span data-i18n={accentKey}>{accent}</span><span class="manifesto__bar" data-quote-bar aria-hidden="true"></span></span><span data-i18n={tailKey}>{tail}</span></span></p>
 
 <style>
   .manifesto__quote {
     /* Display scale, bounded so the statement never forces horizontal scroll
        and the accented phrase always fits on one line — down to 320px in both
-       locales (EN's "useful, visual applications" is the wider phrase). */
-    --manifesto-size: clamp(1.6rem, 0.95rem + 3.2vw, 4rem);
+       locales. The accent is nowrap, so the size is calibrated to the wider
+       phrase: ES's "Aplicaciones que se entienden" (it exceeds EN's
+       "Applications that make sense", which used to be the wider one).
+
+       The bound is two-stage because the About grid changes shape. While it is
+       stacked (≤760px) the quote owns the full column, so this base bound
+       tracks the viewport. From 761px the story and the sticky dossier sit side
+       by side: the story is a query container, so --manifesto-size is driven by
+       the *column width* (`cqi`) in the media query below, keeping the widest
+       accent inside its column (and the gap clear) at every width. */
+    --manifesto-size: clamp(1.35rem, 0.45rem + 4.5vw, 3.4rem);
 
     margin: 0;
     font-family: var(--font-display);
@@ -46,7 +60,14 @@ const { lead, accent, tail, leadKey, accentKey, tailKey } = Astro.props;
     line-height: 1.06;
     letter-spacing: -0.03em;
     color: var(--ink);
-    text-wrap: balance;
+  }
+
+  /* The two authored lines are stacked blocks, so the split is deterministic:
+     the accented phrase (nowrap) always owns line two on its own, exactly as the
+     size is calibrated for. `transform` from the reveal then applies to a block
+     box (it has no effect on a bare inline). */
+  .manifesto__line {
+    display: block;
   }
 
   /* Nowrap inline: the phrase never breaks internally, yet it stays a normal
@@ -58,6 +79,26 @@ const { lead, accent, tail, leadKey, accentKey, tailKey } = Astro.props;
     white-space: nowrap;
   }
 
+  /* Side-by-side About grid (761px+): the story column is ~1.6/2.6 of the shell
+     and, from this breakpoint, is its own query container (`About.astro` sets
+     `container-type: inline-size`). So the statement is sized from the column
+     itself (`cqi`), never the viewport.
+
+     The widest accent phrase — ES's "Aplicaciones que se entienden" — measures
+     ~12.49× the font size (weight 800, tracking -0.03em). At 8cqi that phrase
+     renders at ~99.9% of the column, so it always lands *inside* its own column
+     and the `.about` grid gap stays as fully visible separation. This fixes the
+     root cause: previously the vw-driven size kept growing after the shell had
+     maxed out (and was too large at 768px), so the nowrap phrase overran its
+     column and ate the gap. The 3.4rem ceiling is inert today (the column caps
+     well below it) and only guards a future wider shell; the 1.5rem floor keeps
+     the statement a display headline at the 761px edge. */
+  @media (min-width: 761px) {
+    .manifesto__quote {
+      --manifesto-size: clamp(1.5rem, 8cqi, 3.4rem);
+    }
+  }
+
   .manifesto__bar {
     position: absolute;
     left: 0;
@@ -65,7 +106,7 @@ const { lead, accent, tail, leadKey, accentKey, tailKey } = Astro.props;
     bottom: -0.07em;
     height: clamp(5px, 0.5vw, 10px);
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--spark), var(--trigger));
+    background: var(--spark);
     transform-origin: left center;
     pointer-events: none;
   }

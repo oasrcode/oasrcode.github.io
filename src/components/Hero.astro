@@ -32,74 +32,96 @@ const t = getUI(lang);
     })();
   </script>
 
-  <!--
-    Decorative background field. The hairline grid stays as structure; the
-    canvas is a small set of "travellers" that walk the grid lines, turning at
-    intersections and drawing a spark -> trigger comet trail. The canvas lives
-    inside the grid layer so it shares the grid's cell size and transform, which
-    keeps every line exactly on the grid. Both are decoration only: clipped by
-    the hero, `pointer-events: none`, and invisible to assistive tech.
-  -->
-  <div class="hero__deco" data-hero-deco data-parallax aria-hidden="true">
-    <div class="hero__layer hero__layer--grid" data-hero-grid data-speed="0.2">
-      <canvas class="hero__trace" data-hero-trace aria-hidden="true"></canvas>
-    </div>
-  </div>
-
   <div class="hero__inner container">
-    <HeroName name={profile.name} />
+    <!--
+      Top row. The role marker sits alone, flush right (the left identity
+      cluster — wordmark + alias — was removed). It stays announced.
+      The [ ] brackets are CSS-generated pseudo-elements: decorative, outside the
+      text node, and safe for the i18n client's textContent swap (the text node
+      below contains ONLY text). Some AT (Chromium-based in particular) does expose
+      generated content, so a few screen readers may announce the brackets.
+    -->
+    <div class="hero__top" data-hero-fade>
+      <p class="hero__meta">
+        <span class="hero__role" data-i18n="profile.role">{profile.role[lang]}</span>
+      </p>
+    </div>
 
-    <p class="hero__role" data-hero-fade>
-      <span data-i18n="profile.role">{profile.role[lang]}</span>
-      <span class="hero__sep" aria-hidden="true">·</span>
-      <span class="hero__location" data-i18n="profile.location">{profile.location[lang]}</span>
-    </p>
-    <p
-      class="hero__value"
-      data-hero-fade
-      aria-label={t.hero.valuePropAria}
-      data-i18n="profile.valueProp"
-      data-i18n-attr="aria-label:hero.valuePropAria"
-    >
-      {profile.valueProp[lang]}
-    </p>
+    <!--
+      Signature: spans the full container width and draws itself via CSS. The
+      motion layer adds one decorative beat on top (aria-hidden): a live
+      --trigger nib that rides the ink's leading edge while the signature draws.
+      No-JS / reduced-motion users get the finished signature and no nib.
+    -->
+    <div class="hero__sig" data-nibwrap>
+      <HeroName name={profile.name} />
+      <span class="hero__nib" data-nib-dot aria-hidden="true"></span>
+    </div>
 
-    <div class="hero__actions" data-hero-fade>
-      <Button
-        href={profile.linkedin}
-        variant="primary"
-        external
-        label={t.hero.linkedinAria}
-        magnetic
-        i18nKey="hero.linkedin"
-        i18nAriaKey="hero.linkedinAria"
-      >
-        {t.hero.linkedin}
-      </Button>
-      <Button
-        href={profile.github}
-        variant="secondary"
-        external
-        label={t.hero.githubAria}
-        magnetic
-        i18nKey="hero.github"
-        i18nAriaKey="hero.githubAria"
-      >
-        {t.hero.github}
-      </Button>
+    <!--
+      Editorial row: giant ALL-CAPS statement on the left, the profile column
+      on the right. Both are single text nodes so the language switcher's
+      textContent swap can replace them cleanly.
+    -->
+    <div class="hero__row">
+      <p class="hero__statement" data-hero-fade data-i18n="hero.statement">
+        {t.hero.statement}
+      </p>
+
+      <div class="hero__aside" data-hero-fade>
+        <p class="hero__marker" data-i18n="hero.profileLabel">{t.hero.profileLabel}</p>
+        <p
+          class="hero__value"
+          aria-label={t.hero.valuePropAria}
+          data-i18n="profile.valueProp"
+          data-i18n-attr="aria-label:hero.valuePropAria"
+        >
+          {profile.valueProp[lang]}
+        </p>
+        <p class="hero__loc" data-i18n="profile.location">{profile.location[lang]}</p>
+      </div>
+    </div>
+
+    <!--
+      Foot, pinned to the bottom-left and seated on the sand above the
+      waterline: the pill CTAs.
+    -->
+    <div class="hero__foot">
+      <div class="hero__actions" data-hero-fade>
+        <Button
+          href={profile.linkedin}
+          variant="primary"
+          external
+          label={t.hero.linkedinAria}
+          magnetic
+          i18nKey="hero.linkedin"
+          i18nAriaKey="hero.linkedinAria"
+        >
+          {t.hero.linkedin}
+        </Button>
+        <Button
+          href={profile.github}
+          variant="secondary"
+          external
+          label={t.hero.githubAria}
+          magnetic
+          i18nKey="hero.github"
+          i18nAriaKey="hero.githubAria"
+        >
+          {t.hero.github}
+        </Button>
+      </div>
     </div>
   </div>
 
   <!--
-    Scroll cue — a "traveller" walking down the hero: a hairline track carrying a
-    --spark -> --trigger gradient stroke that draws top-to-bottom in a loop,
-    led by a small trigger dot that fades at the foot. Same visual language as
-    the grid travellers and the timeline rail. Decoration only (aria-hidden):
-    the content below is reached by ordinary scrolling, so it carries no label
-    and is hidden from assistive tech. The loop is skipped under reduced motion,
-    where the gradient line simply rests fully drawn.
+    Scroll cue — a hairline track carrying a solid --spark stroke that draws
+    top-to-bottom in a loop, led by a small trigger dot that fades at the foot.
+    Decoration only (aria-hidden): the content below is reached by ordinary
+    scrolling, so it carries no label and is hidden from assistive tech. The loop
+    is skipped under reduced motion, where the line simply rests fully drawn.
   -->
-  <div class="hero__cue" data-hero-cue aria-hidden="true">
+  <div class="hero__cue" aria-hidden="true">
     <svg
       class="hero__cue-svg"
       viewBox="0 0 12 48"
@@ -108,12 +130,6 @@ const t = getUI(lang);
       fill="none"
       preserveAspectRatio="xMidYMid meet"
     >
-      <defs>
-        <linearGradient id="hero-cue-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop class="hero__cue-stop-a" offset="0" />
-          <stop class="hero__cue-stop-b" offset="1" />
-        </linearGradient>
-      </defs>
       <line class="hero__cue-track" x1="6" y1="2" x2="6" y2="46" pathLength="1" />
       <line
         class="hero__cue-stroke"
@@ -122,10 +138,100 @@ const t = getUI(lang);
         x2="6"
         y2="46"
         pathLength="1"
-        stroke="url(#hero-cue-gradient)"
       />
       <circle class="hero__cue-dot" cx="6" cy="2" r="2.6" />
     </svg>
+  </div>
+
+  <!--
+    Shore — an overhead Canarian beach at the foot of the hero: a soft wet-sand
+    ground that reaches well up toward the dry sand, a real turquoise water body
+    (shallow -> mid -> deep) filling the bottom ~30% of the hero, and a prominent
+    white foam band along the waterline.
+
+    Ground first (behind everything): the wet-sand gradient follows the
+    waterline and climbs toward the dry sand, and a fainter damp residual
+    lingers even higher and fades slowly. Then the water, painted shallow -> mid
+    -> deep so the darkest sea sits lowest (offshore) and the pale shoreline
+    reads on top; the foam band is painted last so it always rides the leading
+    edge.
+
+    Purely decorative: aria-hidden, pointer-events:none, clipped by its own
+    overflow, and seated at z-index -1 (above the hero's own cream field, below
+    every in-flow child and the positioned cue, because `.hero` isolates its
+    own stacking context). Motion is gated on `js-motion` plus a
+    no-preference query — no-JS and reduced-motion users get the same
+    fully-rendered static scene.
+  -->
+  <div class="hero__shore" aria-hidden="true">
+    <div class="hero__sand-damp"></div>
+    <div class="hero__sand-wet"></div>
+
+    <!-- Shallow shore water (painted first, so mid/deep cover its lower half). -->
+    <div class="hero__wave hero__wave--shallow">
+      <svg class="hero__wave-svg" viewBox="0 0 1440 300" preserveAspectRatio="none" focusable="false">
+        <path
+          class="hero__water"
+          d="M0 62 C 180 40 340 80 520 58 C 700 40 860 32 1040 60 C 1220 88 1340 68 1440 56 L1440 300 L0 300 Z"
+        />
+      </svg>
+    </div>
+
+    <!-- Mid water. -->
+    <div class="hero__wave hero__wave--mid">
+      <svg class="hero__wave-svg" viewBox="0 0 1440 300" preserveAspectRatio="none" focusable="false">
+        <path
+          class="hero__water"
+          d="M0 176 C 190 156 350 200 540 178 C 730 158 890 150 1070 176 C 1250 206 1350 184 1440 170 L1440 300 L0 300 Z"
+        />
+      </svg>
+    </div>
+
+    <!-- Deep sea (painted last of the fills, so the darkest water is the base). -->
+    <div class="hero__wave hero__wave--deep">
+      <svg class="hero__wave-svg" viewBox="0 0 1440 300" preserveAspectRatio="none" focusable="false">
+        <path
+          class="hero__water"
+          d="M0 221 C 200 199 360 241 560 219 C 760 199 920 195 1100 221 C 1280 247 1360 227 1440 213 L1440 300 L0 300 Z"
+        />
+      </svg>
+    </div>
+
+    <!-- Foam: a prominent white band riding the advancing waterline — a wide
+         soft halo, a mid band, a scatter of crest bubbles that give it texture,
+         and a thin bright core (the hard edge). All share the shallow layer's
+         geometry and timing, so the band stays welded to the water; painted last
+         so it always sits on top. `non-scaling-stroke` keeps each stroke true
+         despite the stretched viewBox. -->
+    <div class="hero__wave hero__wave--foam">
+      <svg class="hero__wave-svg" viewBox="0 0 1440 300" preserveAspectRatio="none" focusable="false">
+        <g class="hero__foam-crests">
+          <circle class="hero__foam-bubble" cx="132" cy="58" r="7" opacity="0.6" />
+          <circle class="hero__foam-bubble" cx="260" cy="63" r="5" opacity="0.45" />
+          <circle class="hero__foam-bubble" cx="388" cy="68" r="8" opacity="0.65" />
+          <circle class="hero__foam-bubble" cx="520" cy="61" r="6" opacity="0.5" />
+          <circle class="hero__foam-bubble" cx="652" cy="50" r="9" opacity="0.7" />
+          <circle class="hero__foam-bubble" cx="780" cy="45" r="6" opacity="0.5" />
+          <circle class="hero__foam-bubble" cx="908" cy="48" r="7" opacity="0.6" />
+          <circle class="hero__foam-bubble" cx="1040" cy="63" r="5" opacity="0.45" />
+          <circle class="hero__foam-bubble" cx="1164" cy="76" r="8" opacity="0.65" />
+          <circle class="hero__foam-bubble" cx="1270" cy="76" r="6" opacity="0.5" />
+          <circle class="hero__foam-bubble" cx="1361" cy="69" r="7" opacity="0.55" />
+        </g>
+        <path
+          class="hero__foam hero__foam--halo"
+          d="M0 62 C 180 40 340 80 520 58 C 700 40 860 32 1040 60 C 1220 88 1340 68 1440 56"
+        />
+        <path
+          class="hero__foam hero__foam--band"
+          d="M0 62 C 180 40 340 80 520 58 C 700 40 860 32 1040 60 C 1220 88 1340 68 1440 56"
+        />
+        <path
+          class="hero__foam"
+          d="M0 62 C 180 40 340 80 520 58 C 700 40 860 32 1040 60 C 1220 88 1340 68 1440 56"
+        />
+      </svg>
+    </div>
   </div>
 </section>
 
@@ -176,118 +282,247 @@ const t = getUI(lang);
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    /* Light editorial field: the hero paints its own cream ground (the dive's
+       water gradient lives on `.sea`, which starts exactly at this element's
+       bottom). */
     background: var(--base);
     /* First screen: hero + the fixed nav's reserved band = 100svh. `svh` keeps
        the fold honest on mobile as the browser bars show/hide; the `vh` line is
        the fallback. `--nav-clearance` is the same band the nav reserves at the
        top of <body>, so the two always agree. */
     --hero-nav-offset: var(--nav-clearance, 5.25rem);
+
+    /* --- Shore scene tones (scoped here; global tokens untouched) --------- */
+    /* Reference-matched Canarian water: light translucent turquoise (shallow)
+       -> vivid turquoise (mid) -> deep teal (deep), with white foam. The mid is
+       brightened toward a vivid turquoise instead of the muted --trigger; the
+       deep stays dark so the offshore band reads as real depth. */
+    --sand-wet: #E3C79B;   /* warm, darker beige — sand the waves have washed */
+    --sand-damp: #EDD8B6;  /* fainter residual left further up the beach */
+    --water-shallow: rgb(150 227 222 / 0.9); /* light translucent turquoise */
+    --water-mid: #16A8B8;  /* vivid turquoise */
+    --water-deep: #0A5A66; /* deep teal (kept dark) */
+    --foam: #FFFFFF;
+    /* Height of the water body (the "sea"): ~30% of the hero. The wet-sand
+       scene is taller and reaches above the waterline toward the dry sand, so
+       `--sand-reach` (not `--shore-h`) is what the shore container clips to. */
+    --shore-h: clamp(170px, 30vh, 380px);
+    --sand-reach: calc(var(--shore-h) * 1.2);
+
     display: flex;
     flex-direction: column;
     min-height: calc(100vh - var(--hero-nav-offset));
     min-height: calc(100svh - var(--hero-nav-offset));
-    /* The deeper bottom padding reserves the cue's lane, so the centered
-       content can never collide with it. */
-    padding-block: clamp(2.5rem, 6vh, 4.5rem) clamp(4.75rem, 11vh, 7.5rem);
+    /* The bottom padding lifts the foot (the pill CTAs) clear of the sea and
+       seats it on the sand ABOVE the waterline — dry/wet beach, not water. The
+       padding equals `--sand-reach` (the shore scene's own height), so the foot's
+       bottom edge lands exactly at the top of the sand scene, well above the
+       water body (`--shore-h`) and its foam/crest animation. The shallow water
+       below is the palest layer, so dark text/buttons would stay legible even if
+       they grazed it; the vivid mid and deep teal sit further beneath. Tracked
+       to the shore scale so it holds across viewports. */
+    padding-block: clamp(2.5rem, 6vh, 4.5rem) var(--sand-reach);
   }
 
-  /* Decorative background field. The grid drifts on scroll (transform) and the
-     canvas is painted by the motion layer. Clipped by the hero, so neither can
-     shift layout or add scroll. */
-  .hero__deco {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    overflow: hidden;
-    pointer-events: none;
-    /* Room for the cursor-driven tilt on the grid. */
-    perspective: 900px;
-  }
-
-  /* The wandering grid traces. The canvas sits inside the grid layer, so its
-     origin and cell match the background lines exactly; it is transparent
-     without JS / under reduced motion. Decoration only. */
-  .hero__trace {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    pointer-events: none;
-  }
-
-  .hero__layer {
-    position: absolute;
-    will-change: transform;
-  }
-
-  /* Hairline blueprint grid — structure, not decoration. Fades out before the
-     content ends so it never competes with the copy. Oversized on Y so the
-     parallax drift never exposes an edge. The cell size is a single source of
-     truth the trace canvas reads from to stay grid-aligned. */
-  .hero__layer--grid {
-    inset: -12% -4%;
-    --grid-line: color-mix(in srgb, var(--line) 65%, transparent);
-    --hero-grid-cell: clamp(3.5rem, 7vw, 5.5rem);
-    background-image:
-      linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
-    background-size: var(--hero-grid-cell) var(--hero-grid-cell);
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, #000 58%, transparent 100%);
-  }
-
+  /* Top-aligned editorial column; the foot pushes itself to the bottom. */
   .hero__inner {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    /* Centered, biased upward by the deeper bottom padding: the signature sits
-       in the upper-middle, role/value/CTAs below it, cue pinned at the foot. */
-    justify-content: center;
-    gap: clamp(1.25rem, 2.6vw, 1.9rem);
+    gap: clamp(1rem, 2.4vw, 1.9rem);
   }
 
+  /* --- Top row ----------------------------------------------------------- */
+  /* The role marker is the only child now, kept flush right (the left identity
+     cluster was removed). `flex-end` replaces the old `space-between`. */
+  .hero__top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 0.5rem 1.5rem;
+  }
+
+  .hero__meta {
+    margin: 0;
+  }
+
+  /* Bracketed role marker — the text node carries the i18n swap; the brackets
+     are generated pseudo-elements, decorative and outside the text node. Some
+     AT (Chromium-based) exposes generated content, so they may be announced. */
   .hero__role {
+    font-family: var(--font-mono);
+    font-size: var(--text-tag);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hero__role::before {
+    content: '[ ';
+  }
+
+  .hero__role::after {
+    content: ' ]';
+  }
+
+  /* --- Signature --------------------------------------------------------- */
+  .hero__sig {
+    position: relative;
+    width: 100%;
+  }
+
+  /* Override HeroName's display clamp so the signature spans the container
+     edge to edge (the component itself is untouched). */
+  .hero .hero__sig :global(.hero__name svg) {
+    width: 100%;
+  }
+
+  /* --- Live nib ----------------------------------------------------------
+     A --trigger dot that leads the ink while the signature draws. The motion
+     layer positions it each frame via `transform` and reveals it by toggling
+     `is-active`; it rests fully hidden (visibility + opacity 0) so no-JS /
+     reduced-motion users — and any stray pre-position paint at its default
+     origin — never show a stranded dot. Purely decorative. */
+  .hero__nib {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: clamp(9px, 1.1vw, 13px);
+    height: clamp(9px, 1.1vw, 13px);
+    border-radius: 50%;
+    background: var(--trigger);
+    /* Soft halo built from layered shadows (no gradient). */
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--trigger) 22%, transparent),
+      0 0 10px 2px color-mix(in srgb, var(--trigger) 45%, transparent),
+      0 0 22px 7px color-mix(in srgb, var(--trigger) 20%, transparent);
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    /* Delay the visibility swap on hide so the 0.12s opacity fade still plays. */
+    transition:
+      opacity 0.12s linear,
+      visibility 0s linear 0.12s;
+    will-change: transform, opacity;
+  }
+
+  /* Revealed only while the ink is actually drawing. */
+  .hero__nib.is-active {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity 0.12s linear,
+      visibility 0s;
+  }
+
+  /* Reduced motion: no nib at all (the signature simply rests fully drawn). */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__nib {
+      display: none;
+    }
+  }
+
+  /* --- Editorial row ----------------------------------------------------- */
+  .hero__row {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.25rem, 3vw, 2.25rem);
+  }
+
+  /* The giant statement. `--text-h1` is the largest existing type token and is
+     calibrated to the same fluid curve as variant D's clamp. */
+  .hero__statement {
     margin: 0;
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: var(--text-lead);
-    letter-spacing: -0.01em;
+    font-weight: 900;
+    font-size: var(--text-h1);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
     color: var(--ink);
+    overflow-wrap: break-word;
   }
 
-  /* Location rides the role line, separated by a middot. The separator and the
-     place are set quieter than the role so the role still leads. */
-  .hero__sep {
-    margin-inline: 0.5rem;
-    color: var(--muted);
-    font-weight: 400;
+  .hero__aside {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.75rem, 1.6vw, 1rem);
   }
 
-  .hero__location {
-    color: var(--muted-2);
+  .hero__marker {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-tag);
     font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* Brackets are generated pseudo-elements: decorative, outside the text node,
+     and safe for the i18n swap — though some AT may still announce them. */
+  .hero__marker::before {
+    content: '[ ';
+  }
+
+  .hero__marker::after {
+    content: ' ]';
   }
 
   .hero__value {
     margin: 0;
-    max-width: 48ch;
-    font-size: var(--text-lead);
-    line-height: 1.45;
+    max-width: 34ch;
+    font-size: var(--text-small);
+    line-height: 1.5;
     color: var(--muted-2);
+    text-wrap: pretty;
+  }
+
+  .hero__loc {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-tag);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* --- Foot: the pill CTAs, pinned bottom-left --------------------------- */
+  .hero__foot {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.85rem;
-    margin-top: clamp(0.25rem, 1.5vw, 0.75rem);
+  }
+
+  /* --- Two-column split (tablet and up) ---------------------------------- */
+  @media (min-width: 768px) {
+    .hero__row {
+      display: grid;
+      /* Fixed track sizes summing to 92%; `space-between` places the first track
+         flush left and the second flush right, so the single inter-column space
+         becomes the remaining 8%. `gap` is reset because it no longer contributes
+         (the inherited flex `gap` above is only for the stacked layout). */
+      grid-template-columns: 58% 34%;
+      justify-content: space-between;
+      gap: 0;
+      align-items: start;
+    }
   }
 
   /* --- Scroll cue -------------------------------------------------------- */
   /* Bottom-centre, inside the reserved padding lane. Sized to hint, not to
-     decorate: a 48px hairline with a gradient stroke that draws downward. */
+     decorate: a 48px hairline with a solid accent stroke that draws downward. */
   .hero__cue {
     position: absolute;
     left: 50%;
@@ -302,24 +537,19 @@ const t = getUI(lang);
     height: 48px;
   }
 
-  .hero__cue-stop-a {
-    stop-color: var(--spark);
-  }
-
-  .hero__cue-stop-b {
-    stop-color: var(--trigger);
-  }
-
+  /* Solid accent trail converging on the trigger dot; the track is a
+     hairline. */
   .hero__cue-track {
     stroke: var(--line);
     stroke-width: 1.5;
     stroke-linecap: round;
   }
 
-  /* The gradient stroke is the traveller's trail. Base state = hidden + not
+  /* The solid accent stroke is the cue's trail. Base state = hidden + not
      drawn; the loop lives behind a no-preference query so reduced motion gets
      the static, fully-drawn state below rather than a one-frame flash. */
   .hero__cue-stroke {
+    stroke: var(--spark);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-dasharray: 1;
@@ -390,11 +620,278 @@ const t = getUI(lang);
     }
   }
 
-  /* Reduced motion / no JS: no loop — the gradient line rests fully drawn as a
+  /* Reduced motion / no JS: no loop — the solid line rests fully drawn as a
      static hint. */
   @media (prefers-reduced-motion: reduce) {
     .hero__cue-stroke {
       stroke-dashoffset: 0;
+      opacity: 1;
+    }
+  }
+
+  /* --- Shore: overhead beach at the foot -------------------------------- */
+  /* Full-bleed scene pinned to the hero's bottom, clipped to `--sand-reach`
+     (the wet-sand scene, taller than the sea so the sand can climb toward the
+     dry beach). `z-index: -1` paints it above the hero's own cream field but
+     beneath every in-flow child and the positioned cue (the hero isolates its
+     own stacking context, so it can never slip behind the page). Clipped by its
+     own overflow, so no horizontal overflow at any width. The sea body itself
+     (`--shore-h`) sits at the bottom of this scene; the hero's bottom padding
+     (`--sand-reach`) seats the foot's CTAs on the sand just above the waterline,
+     clear of the sea. */
+  .hero__shore {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--sand-reach);
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* --- Wet sand ground -------------------------------------------------- */
+  /* Soft wet->dry gradient. Holds the warm beige through the waterline (so the
+     washed sand reads strong right where the water meets it) then fades toward
+     the dry --base well above, letting the wet zone reach higher up the beach. */
+  .hero__sand-wet,
+  .hero__sand-damp {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    transform: translateY(0);
+  }
+
+  .hero__sand-wet {
+    height: var(--sand-reach);
+    background: linear-gradient(
+      to top,
+      var(--sand-wet) 0%,
+      var(--sand-wet) 50%,
+      color-mix(in srgb, var(--sand-wet) 80%, transparent) 72%,
+      color-mix(in srgb, var(--sand-wet) 30%, transparent) 90%,
+      transparent 98%
+    );
+  }
+
+  /* Residual damp: a fainter mark left higher up the beach that lingers as the
+     water retreats, then fades. Lower opacity, no hard edges — it extends the
+     wet look above the main wash. */
+  .hero__sand-damp {
+    height: var(--sand-reach);
+    opacity: 0.28;
+    background: linear-gradient(
+      to top,
+      transparent 0%,
+      transparent 55%,
+      color-mix(in srgb, var(--sand-damp) 70%, transparent) 78%,
+      var(--sand-damp) 88%,
+      transparent 97%
+    );
+  }
+
+  /* --- Water waves ------------------------------------------------------ */
+  /* The wrapper carries the horizontal drift (shape undulation); the inner svg
+     carries the vertical advance/retreat. Keeping them on separate elements
+     lets every layer run two independent periods, so nothing reads as
+     synchronized bobbing. Both are over-wide/tall and clipped by the band, so
+     no drift ever uncovers an edge. */
+  .hero__wave {
+    position: absolute;
+    left: -15%;
+    width: 130%;
+    bottom: 0;
+    height: var(--shore-h);
+  }
+
+  .hero__wave-svg {
+    position: absolute;
+    left: 0;
+    bottom: -15%;
+    width: 100%;
+    height: 130%;
+    display: block;
+  }
+
+  .hero__water {
+    fill: currentColor;
+  }
+
+  /* Depth: painted shallow -> mid -> deep so the darkest sea is the base. */
+  .hero__wave--shallow {
+    color: var(--water-shallow);
+  }
+
+  .hero__wave--mid {
+    color: var(--water-mid);
+  }
+
+  .hero__wave--deep {
+    color: var(--water-deep);
+  }
+
+  /* Foam: a prominent white band riding the waterline — a wide soft halo, a
+     mid band, a scatter of crest bubbles (texture), and a thin bright crest
+     core (the hard edge). Layered strokes fake the soft band without filters,
+     and `non-scaling-stroke` keeps each stroke true despite the stretched
+     viewBox. */
+  .hero__foam {
+    fill: none;
+    stroke: var(--foam);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 1;
+  }
+
+  .hero__foam--halo {
+    stroke-width: 30;
+    opacity: 0.2;
+  }
+
+  .hero__foam--band {
+    stroke-width: 14;
+    opacity: 0.5;
+  }
+
+  /* Crest bubbles: real fills (not strokes) so they read as foam texture along
+     the waterline; per-circle opacity sets the density. */
+  .hero__foam-bubble {
+    fill: var(--foam);
+  }
+
+  /* --- Motion: gated on js-motion + no-preference ----------------------- */
+  /* With no JS (no `js-motion`) or under reduced motion the whole scene rests
+     in its static, fully-rendered state. Each layer has a different horizontal
+     drift, vertical amplitude, duration and negative delay, so the waterline
+     and the internal bands advance/retreat organically and out of phase. */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js-motion .hero__wave {
+      will-change: transform;
+      animation: hero-shore-drift var(--dx-dur, 12s) ease-in-out
+        var(--dx-delay, 0s) infinite alternate;
+    }
+
+    html.js-motion .hero__wave-svg {
+      will-change: transform;
+      animation: hero-shore-swell var(--dy-dur, 9s) ease-in-out
+        var(--dy-delay, 0s) infinite alternate;
+    }
+
+    html.js-motion .hero__sand-wet {
+      will-change: transform;
+      animation: hero-sand-wet 4.8s ease-in-out -1.8s infinite alternate;
+    }
+
+    html.js-motion .hero__sand-damp {
+      will-change: transform, opacity;
+      animation: hero-sand-damp 7.8s ease-in-out -3s infinite;
+    }
+
+    /* Deep: broadest swells, slowest drift. */
+    html.js-motion .hero__wave--deep {
+      --dx-dur: 10.5s;
+      --dx-delay: -4s;
+      --dx: 1.5%;
+      --dy-dur: 8s;
+      --dy-delay: -6s;
+      --amp: 12px;
+    }
+
+    /* Mid. */
+    html.js-motion .hero__wave--mid {
+      --dx-dur: 7.6s;
+      --dx-delay: -8s;
+      --dx: 2.2%;
+      --dy-dur: 5.8s;
+      --dy-delay: -3s;
+      --amp: 16px;
+    }
+
+    /* Shallow + foam share timing so the foam band stays welded to the
+       waterline, but they run faster and lighter than the sea behind. */
+    html.js-motion .hero__wave--shallow,
+    html.js-motion .hero__wave--foam {
+      --dx-dur: 6s;
+      --dx-delay: -2s;
+      --dx: 2.8%;
+      --dy-dur: 4.3s;
+      --dy-delay: -1.4s;
+      --amp: 14px;
+    }
+
+    /* The foam core breathes independently of the shared transform; the halo
+       and band keep their own fixed low opacity so the edge stays soft. */
+    html.js-motion .hero__foam:not(.hero__foam--halo):not(.hero__foam--band) {
+      animation: hero-foam-pulse 3.8s ease-in-out -1.2s infinite alternate;
+    }
+  }
+
+  /* Horizontal drift half-stroke; `alternate` plays it back, so from/to are
+     one side each and the loop never rewinds. */
+  @keyframes hero-shore-drift {
+    from {
+      transform: translate3d(calc(-1 * var(--dx, 2%)), 0, 0);
+    }
+    to {
+      transform: translate3d(var(--dx, 2%), 0, 0);
+    }
+  }
+
+  /* Vertical advance/retreat (the waterline moving up the beach and back). */
+  @keyframes hero-shore-swell {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-1 * var(--amp, 14px)));
+    }
+  }
+
+  /* Wet sand extends up with the advancing water and retreats with it. */
+  @keyframes hero-sand-wet {
+    from {
+      transform: translateY(10px);
+    }
+    to {
+      transform: translateY(-30px);
+    }
+  }
+
+  /* Damp residual: rises and lingers up the sand as the water retreats, then
+     sinks and fades slowly. 0% == 100%, so the loop is seamless. */
+  @keyframes hero-sand-damp {
+    0% {
+      transform: translateY(8px);
+      opacity: 0.16;
+    }
+    30% {
+      transform: translateY(-34px);
+      opacity: 0.5;
+    }
+    55% {
+      transform: translateY(-34px);
+      opacity: 0.4;
+    }
+    82% {
+      transform: translateY(4px);
+      opacity: 0.18;
+    }
+    100% {
+      transform: translateY(8px);
+      opacity: 0.16;
+    }
+  }
+
+  /* Foam fades in as a wave advances, then softens on the retreat. */
+  @keyframes hero-foam-pulse {
+    from {
+      opacity: 0.7;
+    }
+    to {
       opacity: 1;
     }
   }

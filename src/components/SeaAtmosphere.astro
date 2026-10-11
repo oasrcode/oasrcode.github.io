@@ -1,0 +1,386 @@
+---
+// ============================================================================
+// SeaAtmosphere — the marine atmosphere for the dive (`.sea`, below the hero).
+//
+// One cohesive, whisper-subtle layer so the descent reads as being underwater
+// without becoming a literal aquarium. It is purely decorative:
+//   · aria-hidden            — invisible to assistive tech
+//   · pointer-events: none   — never intercepts a click
+//   · z-index: -1            — above the `.sea` gradient, behind all content
+//
+// The cues, back to front:
+//   1. god rays   — ten light shafts from the surface, dissolving before mid-water
+//   2. caustics   — a very slow, soft light drift (five aqua pools)
+//   3. marine snow— a dense drift of suspended particles (44), thinning with depth
+//   4. bubbles    — ten risers staggered through the column's depth
+//
+// Density budget (transform/opacity only): 10 rays + 44 flakes + 10 bubbles =
+// 64 animated nodes, plus 1 caustic element.
+// "More" here is more particles and more shafts, NOT brighter ones: per-beam
+// ray alpha was reduced as the count rose so the shallow-water light composite
+// (and the AA guarantee in index.astro) stays bounded.
+//
+// Motion is gated exactly like the hero scene: only `html.js-motion` (set by the
+// inline bootstrap, skipped under reduced motion / no JS) plus a no-preference
+// query animate anything. Reduced motion and no-JS therefore render the same
+// settled, fully-visible static scene. Only `transform`/`opacity` are animated.
+// ============================================================================
+
+// God-ray shafts — ten beams (was four) for a fuller, wider-lit surface.
+// Vars are per-beam; `--rot` is the resting tilt. Each beam is deliberately
+// fainter than the old set (peak --o 0.09 vs 0.13): many more shafts, same
+// bounded shallow-water light budget, so the descent looks busier without the
+// top washing out or breaking text contrast (see index.astro).
+const rays = [
+  { x: '3%', w: '6rem', rot: '-10deg', o: '0.09', dur: '36s', delay: '-4s' },
+  { x: '12%', w: '4rem', rot: '-6deg', o: '0.05', dur: '44s', delay: '-26s' },
+  { x: '21%', w: '9rem', rot: '-3deg', o: '0.06', dur: '40s', delay: '-11s' },
+  { x: '30%', w: '5rem', rot: '-1deg', o: '0.04', dur: '50s', delay: '-33s' },
+  { x: '39%', w: '7rem', rot: '2deg', o: '0.055', dur: '42s', delay: '-18s' },
+  { x: '48%', w: '4rem', rot: '4deg', o: '0.035', dur: '54s', delay: '-7s' },
+  { x: '57%', w: '8rem', rot: '6deg', o: '0.055', dur: '38s', delay: '-40s' },
+  { x: '66%', w: '5rem', rot: '7deg', o: '0.04', dur: '48s', delay: '-22s' },
+  { x: '75%', w: '10rem', rot: '9deg', o: '0.06', dur: '46s', delay: '-15s' },
+  { x: '86%', w: '5rem', rot: '11deg', o: '0.045', dur: '52s', delay: '-30s' },
+];
+
+// Marine snow — a dense drift of 44 suspended particles (was 10). Positions are
+// drawn from two low-discrepancy (golden-ratio) sequences so the field stays
+// even — no clumps, no visible grid — with a small hash jitter to keep it
+// organic. The vertical distribution is biased toward the surface (`^1.5`), so
+// particles thin out toward the abyss, echoing the rays' fade with depth — but
+// gently, so the whole upper two-thirds of the dive keeps drifting.
+//
+// Brightness is deliberately bounded: peak `--o` is capped at 0.35 (was up to
+// 0.50). The denser field is biased toward the surface, exactly where the
+// shallow-water AA margin is tightest, so a single bright flake behind a glyph
+// could otherwise break the guaranteed >=4.5:1 text contrast. Capping the PEAK
+// keeps the field just as dense (all 44 flakes remain) while bounding the
+// brightest particle the light-on-water text can ever sit on.
+//
+// The hash is seeded, so the build is byte-stable (no Math.random at build time)
+// and every particle keeps its own current (direction + speed).
+const SNOW = 44;
+let seedS = 0x1234abcd;
+const rand = () => {
+  seedS = (seedS * 1103515245 + 12345) & 0x7fffffff;
+  return seedS / 0x80000000;
+};
+const flakes = Array.from({ length: SNOW }, (_, i) => {
+  const x = `${(((i * 0.618034 + rand() * 0.08) % 1) * 100).toFixed(1)}%`;
+  const y = `${((Math.pow((i * 0.754877 + rand() * 0.08) % 1, 1.5) * 88) + 2).toFixed(1)}%`;
+  const s = `${(2 + rand() * 2).toFixed(1)}px`;
+  // Peak opacity capped at 0.35 so a bright flake can never break the
+  // shallow-water >=4.5:1 contrast guarantee (see index.astro `.sea`).
+  const o = (0.2 + rand() * 0.15).toFixed(2);
+  const dur = `${Math.round(60 + rand() * 56)}s`;
+  const delay = `-${Math.round(rand() * 100)}s`;
+  const dx = `${((rand() * 2 - 1) * 30).toFixed(0)}px`;
+  const dy = `${Math.round(60 + rand() * 100)}px`;
+  return { x, y, s, o, dur, delay, dx, dy };
+});
+
+// Risers — ten bubbles (was four), each parked at its own depth across the
+// column (`y` spans 6%→88% of the ~4000px dive, measured from the foot) and
+// climbing a per-bubble stretch of water (`rise`, 40–64vh). Negative delays put
+// them out of phase, so the column always has a few in flight at different
+// depths — a distributed field of risers, not one local band near the floor.
+const bubbles = [
+  { x: '12%', y: '6%', s: '5px', o: '0.32', dur: '34s', delay: '-4s', bx: '14px', rise: '-44vh' },
+  { x: '26%', y: '16%', s: '7px', o: '0.26', dur: '40s', delay: '-27s', bx: '-15px', rise: '-56vh' },
+  { x: '39%', y: '25%', s: '4px', o: '0.34', dur: '26s', delay: '-9s', bx: '9px', rise: '-40vh' },
+  { x: '53%', y: '34%', s: '6px', o: '0.3', dur: '36s', delay: '-16s', bx: '-11px', rise: '-50vh' },
+  { x: '66%', y: '43%', s: '5px', o: '0.31', dur: '30s', delay: '-22s', bx: '12px', rise: '-46vh' },
+  { x: '79%', y: '52%', s: '8px', o: '0.24', dur: '44s', delay: '-35s', bx: '18px', rise: '-64vh' },
+  { x: '90%', y: '61%', s: '4px', o: '0.33', dur: '28s', delay: '-6s', bx: '-9px', rise: '-42vh' },
+  { x: '18%', y: '70%', s: '6px', o: '0.29', dur: '38s', delay: '-31s', bx: '16px', rise: '-54vh' },
+  { x: '44%', y: '79%', s: '5px', o: '0.3', dur: '32s', delay: '-13s', bx: '-13px', rise: '-48vh' },
+  { x: '71%', y: '88%', s: '5px', o: '0.32', dur: '34s', delay: '-19s', bx: '-10px', rise: '-52vh' },
+];
+---
+
+<div class="sea-atmosphere" data-sea-atmosphere aria-hidden="true">
+  <!-- 1. God rays: shafts from the surface, masked to dissolve before mid-water. -->
+  <div class="sea-atmosphere__rays">
+    {
+      rays.map((r) => (
+        <span
+          class="sea-atmosphere__ray"
+          style={`--x:${r.x};--w:${r.w};--rot:${r.rot};--o:${r.o};--dur:${r.dur};--delay:${r.delay}`}
+        />
+      ))
+    }
+  </div>
+
+  <!-- 2. Caustics: a very slow, soft light drift. -->
+  <div class="sea-atmosphere__caustics"></div>
+
+  <!-- 3. Marine snow: a dense drift of suspended particles on faint currents. -->
+  <div class="sea-atmosphere__snow">
+    {
+      flakes.map((f) => (
+        <span
+          class="sea-atmosphere__flake"
+          style={`--x:${f.x};--y:${f.y};--s:${f.s};--o:${f.o};--dur:${f.dur};--delay:${f.delay};--dx:${f.dx};--dy:${f.dy}`}
+        />
+      ))
+    }
+  </div>
+
+  <!-- 4. Bubbles: risers staggered across the column's depth. -->
+  <div class="sea-atmosphere__bubbles">
+    {
+      bubbles.map((b) => (
+        <span
+          class="sea-atmosphere__bubble"
+          style={`--x:${b.x};--y:${b.y};--s:${b.s};--o:${b.o};--dur:${b.dur};--delay:${b.delay};--bx:${b.bx};--rise:${b.rise}`}
+        />
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  /* --- Root -------------------------------------------------------------
+     Absolutely filling `.sea` (which now spans the dive AND the footer).
+     z-index:-1 seats it above the `.sea` water gradient but behind every
+     in-flow section (`.sea` isolates its own stacking context so -1 can never
+     slip behind the page). `overflow:hidden` clips the rays / caustics that
+     deliberately overhang, so nothing ever causes horizontal overflow. It is a
+     sibling of the sections, never an ancestor of the About sticky dossier, so
+     it cannot affect `position: sticky`. */
+  .sea-atmosphere {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    /* Static default for the scrubbed descent value. sea-depth.ts writes
+       `--sea-depth` here (the element the consuming rays live inside) instead
+       of on `.sea`, so it never inherits across the whole ~4000px dive. Unset
+       under no-JS / reduced motion — the rays fall back to this 0, i.e. the
+       settled surface scene: rays full. */
+    --sea-depth: 0;
+  }
+
+  /* --- 1. God rays ------------------------------------------------------ */
+  /* Top-anchored band; the mask fades the shafts to nothing well before
+     mid-water, so the deeper sections read darker and quieter. The shaft
+     gradient's peak alpha is deliberately modest (34%, was 62%): together with
+     the quieter caustics, it bounds the brightest shallow-water composite so
+     the light-on-water secondary tokens clear AA at every width (see `.sea` in
+     index.astro) — not just where padding happens to push the text below the
+     light. */
+  .sea-atmosphere__ray,
+  .sea-atmosphere__rays {
+    --ray-tint: color-mix(in srgb, var(--trigger) 75%, var(--ink));
+  }
+
+  .sea-atmosphere__rays {
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 42%;
+    /* Fade the whole shaft band out as the descent deepens. `--sea-depth` is
+       written on this atmosphere element by sea-depth.ts; it defaults to 0, so
+       no-JS / reduced motion render the rays fully visible. */
+    opacity: calc(1 - var(--sea-depth, 0));
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 16%,
+      rgba(0, 0, 0, 0.5) 50%,
+      transparent 80%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 16%,
+      rgba(0, 0, 0, 0.5) 50%,
+      transparent 80%
+    );
+  }
+
+  .sea-atmosphere__ray {
+    position: absolute;
+    top: -12%;
+    left: var(--x);
+    width: var(--w);
+    height: 130%;
+    transform-origin: 50% 0%;
+    transform: rotate(var(--rot));
+    opacity: var(--o);
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--ray-tint) 34%, transparent),
+      color-mix(in srgb, var(--ray-tint) 12%, transparent) 38%,
+      transparent 80%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 35%,
+      #000 65%,
+      transparent
+    );
+    mask-image: linear-gradient(to right, transparent, #000 35%, #000 65%, transparent);
+    will-change: transform;
+  }
+
+  /* --- 2. Caustics ------------------------------------------------------ */
+  /* Over-sized (inset:-25%) so the slow drift never exposes an edge; clipped
+     by the root. Five soft aqua pools (was three) read as a richer, more
+     alive play of light on the water. The element's own `opacity` still caps
+     the layer's whole contribution at 0.07, so adding pools enriches the
+     PATTERN without raising the shallow-water light budget the AA guarantee
+     depends on (unlike the rays, which are separate elements). */
+  .sea-atmosphere__caustics {
+    position: absolute;
+    inset: -25%;
+    opacity: 0.07;
+    background:
+      radial-gradient(
+        38% 22% at 22% 30%,
+        color-mix(in srgb, var(--trigger) 34%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        30% 18% at 68% 55%,
+        color-mix(in srgb, var(--trigger) 26%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        46% 26% at 45% 82%,
+        color-mix(in srgb, var(--trigger) 20%, transparent),
+        transparent 74%
+      ),
+      radial-gradient(
+        30% 18% at 80% 20%,
+        color-mix(in srgb, var(--trigger) 24%, transparent),
+        transparent 72%
+      ),
+      radial-gradient(
+        34% 20% at 10% 64%,
+        color-mix(in srgb, var(--trigger) 22%, transparent),
+        transparent 72%
+      );
+    will-change: transform;
+  }
+
+  /* --- 3. Marine snow --------------------------------------------------- */
+  .sea-atmosphere__snow {
+    position: absolute;
+    inset: 0;
+  }
+
+  .sea-atmosphere__flake {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--s);
+    height: var(--s);
+    border-radius: 50%;
+    opacity: var(--o);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, #eaf6f5 85%, var(--trigger)) 0%,
+      transparent 70%
+    );
+  }
+
+  /* --- 4. Bubbles ------------------------------------------------------- */
+  .sea-atmosphere__bubbles {
+    position: absolute;
+    inset: 0;
+  }
+
+  .sea-atmosphere__bubble {
+    position: absolute;
+    left: var(--x);
+    bottom: var(--y);
+    width: var(--s);
+    height: var(--s);
+    border-radius: 50%;
+    opacity: var(--o);
+    border: 1px solid color-mix(in srgb, #eaf6f5 42%, transparent);
+    background: radial-gradient(
+      circle at 34% 30%,
+      color-mix(in srgb, #eaf6f5 55%, transparent),
+      transparent 66%
+    );
+  }
+
+  /* --- Motion: gated on js-motion + no-preference ----------------------- */
+  /* Outside this block nothing animates, so reduced motion and no-JS rest in
+     the same settled, fully-visible static scene. Only transform/opacity move. */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js-motion .sea-atmosphere__ray {
+      animation: sea-ray-sway var(--dur) ease-in-out var(--delay) infinite alternate;
+    }
+
+    html.js-motion .sea-atmosphere__caustics {
+      animation: sea-caustic-drift 90s ease-in-out -20s infinite alternate;
+    }
+
+    html.js-motion .sea-atmosphere__flake {
+      animation: sea-snow-drift var(--dur) ease-in-out var(--delay) infinite alternate;
+    }
+
+    html.js-motion .sea-atmosphere__bubble {
+      animation: sea-bubble-rise var(--dur) linear var(--delay) infinite;
+    }
+  }
+
+  /* Shafts sway a touch wider apart, keeping their resting tilt. */
+  @keyframes sea-ray-sway {
+    from {
+      transform: translate3d(-1.4%, 0, 0) rotate(var(--rot));
+    }
+    to {
+      transform: translate3d(1.4%, 0, 0) rotate(calc(var(--rot) + 2deg));
+    }
+  }
+
+  /* A soft lateral + vertical glide of the caustic pools. */
+  @keyframes sea-caustic-drift {
+    from {
+      transform: translate3d(-2.5%, 1.2%, 0) scale(1.02);
+    }
+    to {
+      transform: translate3d(2.5%, -1.2%, 0) scale(1.06);
+    }
+  }
+
+  /* Snow drifts down a current and back, with a gentle opacity breathe. */
+  @keyframes sea-snow-drift {
+    from {
+      transform: translate3d(0, 0, 0);
+      opacity: calc(var(--o) * 0.72);
+    }
+    to {
+      transform: translate3d(var(--dx), var(--dy), 0);
+      opacity: var(--o);
+    }
+  }
+
+  /* Each bubble climbs its own stretch of the column (`--rise`, 40–64vh) from a
+     staggered depth (`--y`, 6%→88% of the dive), so risers are spread through
+     the water rather than bunched in one local band. A bubble fades in at its
+     own depth and out near the top of its climb, then resets invisibly so the
+     loop never rewinds. */
+  @keyframes sea-bubble-rise {
+    0% {
+      transform: translate3d(0, 0, 0);
+      opacity: 0;
+    }
+    12% {
+      opacity: var(--o);
+    }
+    80% {
+      opacity: var(--o);
+    }
+    100% {
+      transform: translate3d(var(--bx), var(--rise), 0);
+      opacity: 0;
+    }
+  }
+</style>

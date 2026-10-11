@@ -4,6 +4,7 @@ import { getUI } from '../i18n';
 import Base from '../layouts/Base.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
+import SeaAtmosphere from '../components/SeaAtmosphere.astro';
 import About from '../components/About.astro';
 import Experience from '../components/Experience.astro';
 import Portfolio from '../components/Portfolio.astro';
@@ -27,11 +28,121 @@ const t = getUI(lang);
   <Nav lang={lang} />
   <main id="main">
     <Hero lang={lang} />
-    <About lang={lang} />
-    <Experience lang={lang} />
-    <Portfolio lang={lang} />
-    <Skills lang={lang} />
+    <!-- Everything past the hero is the dive: one continuous underwater body,
+         themed entirely by the token overrides below (custom properties
+         inherit, so no child component needs to know it is underwater). -->
+    <div class="sea" data-sea>
+      <!-- Mounted FIRST so it reads as the water behind the dive. The painting
+           order is not DOM order: the atmosphere is position:absolute at
+           `z-index: -1` inside this isolated stacking context, so it sits above
+           the `.sea` gradient and behind every in-flow section. Kept a direct
+           sibling of the sections (never an ancestor), so the About sticky
+           dossier and `body { overflow-x: clip }` are untouched. It now also
+           spans the footer (the dive's last child), so the water texture stays
+           uniform right to the sea floor. -->
+      <SeaAtmosphere />
+      <About lang={lang} />
+      <Experience lang={lang} />
+      <Portfolio lang={lang} />
+      <Skills lang={lang} />
+      <!-- The footer is the FINAL child of `.sea` so the single water gradient
+           covers the dive AND the footer as ONE piece (no separate footer
+           background, no seam at the sea→footer boundary). It inherits `.sea`'s
+           scoped tokens; only its own extras are re-declared locally. It is now
+           nested inside `<main>`, so it carries an explicit `role="contentinfo"`
+           to keep the landmark. -->
+      <Footer lang={lang} />
+    </div>
   </main>
-  <Footer lang={lang} />
+  <!-- Bioluminescent cursor: `motion-glow` is the wide halo that screen-blends
+       with the page (illuminates content); `motion-cursor` is the luminous core
+       on top. Both moved together by the magnetic-cursor effect. -->
+  <div class="motion-glow" data-cursor-glow aria-hidden="true"></div>
   <div class="motion-cursor" data-cursor aria-hidden="true"></div>
 </Base>
+
+<style>
+  /* --- The dive ---------------------------------------------------------
+     Everything below the hero is the underwater body of the page. `.sea` owns
+     the SINGLE water gradient and is the element that begins exactly at the
+     hero's bottom (it is the first in-flow block after the hero, so its top
+     edge IS the waterline). The footer is its last child, so the same gradient
+     spans the dive AND the footer as ONE continuous descent — there is no
+     separate footer background and no seam at the sea→footer boundary. The
+     descent runs from the hero's deep-water teal (--dive-surface, #0A5A66) to
+     the dark-teal sea floor (--dive-floor, #082a30) at 100%; a faint top radial
+     is the only "sunlight through water" cue. `.sea` also re-declares the token
+     palette below so every child flips to light-on-water for free. */
+  .sea {
+    /* Colour tokens are re-declared in this scope; every child component reads
+       them, so the whole dive flips to light-on-water for free.
+
+       AA guarantee (holds from the tokens + bounded light-scatter, NOT from
+       layout): the shallow water is lightened by the god rays and the caustics.
+       Those lighteners are capped (the ray gradient peak 34%; caustics 0.07 —
+       see SeaAtmosphere.astro) so the brightest shallow-water composite a
+       shallow text node can land on stays bounded, wherever the text sits.
+       These light-on-water text tokens are sized to clear >= 4.5:1 against it at
+       every width:
+         --muted   #d2e6e7 -> 4.67:1   (worst measured composite, 320px)
+         --trigger #b4ecf4 -> 4.68:1   (and --signal, the same value)
+         --muted-2 (78% --muted + 22% --ink) -> 4.84:1
+       For reference, on the base water #0A5A66 alone: --muted 6.08:1,
+       --trigger 6.09:1, --muted-2 6.30:1. */
+    --ink: #eaf6f5;                        /* light text */
+    --muted: #d2e6e7;                      /* secondary text */
+    --line: rgba(234, 246, 245, 0.16);     /* hairlines */
+    --surface: rgba(234, 246, 245, 0.07);  /* translucent cards / tags */
+    --trigger: #b4ecf4;                    /* links + focus (light aqua) */
+    --signal: #b4ecf4;                     /* semantic / current */
+    --base: transparent;                   /* node/ground fills go see-through */
+
+    /* Bioluminescent accent — dive only. The hero keeps its warm identity
+       (--spark stays #FFAA00 above the waterline); from the waterline down,
+       accents are EMITTED LIGHT rather than flat colour: a luminous, slightly
+       cool core (--spark) with a deeper cyan halo (--glow). Components mix
+       --glow into the wide falloff of their box-shadow / text-shadow, so core
+       and halo can be tuned apart. --trigger/--signal remain the cool
+       link/current pair and sit next to the core. */
+    --spark: #7df2e4;                      /* luminous aqua-mint core */
+    --glow: #37c6d6;                       /* cooler cyan halo tint */
+
+    /* Derived `--muted-2` is redeclared in scope so its dark-ink mix resolves
+       against the underwater --muted/--ink above rather than the :root cream
+       pair (inherited computed values would otherwise stay warm-grey). */
+    --muted-2: color-mix(in srgb, var(--muted) 78%, var(--ink));
+
+    /* Scroll-driven depth (`--sea-depth`, 0 surface → 1 abyss) is NOT declared
+       here: the `sea-depth` motion effect writes it directly on the element
+       that reads it (`.sea-atmosphere`), so it never inherits across the whole
+       ~4000px dive. Under no-JS / reduced motion it is simply unset and the
+       consumer's `var(--sea-depth, 0)` fallback rests at the settled scene. */
+
+    position: relative;
+    /* Stacking context for the decorative sea atmosphere: SeaAtmosphere sits at
+       `z-index: -1` so it paints above this gradient but behind the content. The
+       isolation also keeps that negative layer from escaping behind `.sea` — the
+       same contract Hero uses for its shore scene. It does not affect the About
+       sticky (no overflow is introduced). */
+    isolation: isolate;
+    color: var(--ink);
+    background-color: var(--dive-abyss); /* fallback under the layered gradients */
+    background-image:
+      radial-gradient(
+        120% 22rem at 50% -4rem,
+        color-mix(in srgb, var(--trigger) var(--dive-sun), transparent),
+        transparent 70%
+      ),
+      linear-gradient(
+        180deg,
+        var(--dive-surface) 0%,
+        var(--dive-surface) var(--dive-hold),
+        var(--dive-upper) 18%,
+        var(--dive-mid) 38%,
+        var(--dive-petroleum) 60%,
+        var(--dive-deep) 80%,
+        var(--dive-floor) 100%
+      );
+    background-repeat: no-repeat;
+  }
+</style>

@@ -4,14 +4,22 @@
  *
  * `assets/signature/firma_animada.svg` is used AS AUTHORED and inlined into the
  * DOM (never an `<img>`): its internal `<defs>`, per-stroke `<mask>`s and its
- * `.recorrido` CSS animation only work inline. The authored `viewBox`, the 14
- * letter groups, the 30 `trazo-NN` open paths, the masks and the animation
- * delays/durations (the authored timeline is scaled to a third, so the visible
- * total is `data-duration="3.387"`) are untouched, and the ink stays `#000000`
- * exactly as provided.
+ * `.recorrido` CSS animation only work inline. The sand-engraving look is baked
+ * into the file itself: the `#relieve-arena` filter (applied to the
+ * `<g id="firma-grabada-en-arena">` wrapper that holds every letter segment)
+ * supplies the carved groove, lit/shaded edges and grains, while the `path.tinta`
+ * shapes already carry sand-toned fills (`#9c6333`, `#956134`, `#8e5932`,
+ * `#b7824f`, highlights `#f8ddad`, `#fae3bd`). None of it is re-themed or
+ * re-filtered here — the authored `viewBox`, the letter groups, the open
+ * `trazo-NN` paths, the masks and the animation delays/durations (the authored
+ * timeline is scaled to a third, so the visible total is
+ * `data-duration="3.387"`) are untouched.
  *
  * The only changes to the source are on the root element, for inline +
- * accessible embedding:
+ * accessible embedding, plus stripping the XML declaration:
+ *   - the leading `<?xml version='1.0' encoding='UTF8'?>` processing instruction
+ *     is removed — a processing instruction inside HTML is invalid, and the
+ *     inlined markup is parsed as HTML, not XML;
  *   - `role="img"` -> `role="presentation"` plus `aria-hidden="true"` and
  *     `focusable="false"`, so the decorative SVG is not announced twice (the
  *     real name lives in the visually-hidden <span> below);
@@ -35,9 +43,11 @@ interface Props {
 
 const { name } = Astro.props;
 
-// Root-only attribute adjustment (see the note above). The authored animation,
-// colours and geometry are copied through byte-for-byte.
+// Root-only adjustment (see the note above), plus stripping the XML declaration.
+// Everything else — geometry, fills, filters, masks, animation — is copied
+// through byte-for-byte from the authored asset.
 const inlineSignature = rawSignature
+  .replace(/^<\?xml[^>]*\?>\s*/, '')
   .replace('role="img"', 'role="presentation" aria-hidden="true" focusable="false"')
   .replace(/\saria-labelledby="titulo descripcion"/, '')
   .replace(/\swidth="2048"\sheight="682"/, '');
@@ -74,7 +84,9 @@ const inlineSignature = rawSignature
 
   /* The client SVG is injected as-is (its nodes carry no scope attribute), so
      the root is targeted globally. Scales to the hero up to a display-type
-     size, then clamps to the column: never overflows at 360 or 1280. */
+     size, then clamps to the column: never overflows at 360 or 1280. The
+     sand-engraving look is baked into the SVG itself, so no CSS filter or fill
+     override is applied here. */
   .hero__name :global(svg) {
     display: block;
     width: min(100%, calc(var(--text-display) * 7));

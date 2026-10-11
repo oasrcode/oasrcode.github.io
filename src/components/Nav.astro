@@ -34,8 +34,13 @@ const t = getUI(lang);
 
 <header class="site-header" data-nav>
   <div class="nav-bar">
-    <a class="nav-brand" href="/" aria-label={profile.wordmark}>
+    <a
+      class="nav-brand"
+      href="/"
+      aria-label={`${profile.wordmark} — ${profile.alias}`}
+    >
       <span class="nav-brand__word">{profile.wordmark}</span>
+      <span class="nav-brand__alias">{profile.alias}</span>
     </a>
 
     <nav
@@ -149,13 +154,13 @@ const t = getUI(lang);
     --nav-pad-float: max(0.5rem, calc(var(--gutter) - var(--nav-inset-x)));
 
     /* Dark instrument surface. */
-    --nav-surface: #1a1a1e;
+    --nav-surface: #191715; /* negro */
     --nav-raise: rgba(255, 255, 255, 0.07);
     --nav-active: rgba(255, 255, 255, 0.16);
-    --nav-ink: #f1f1f5;
-    --nav-muted: #9c9ca8;
+    --nav-ink: #FFF3DC; /* crema */
+    --nav-muted: #A79B88; /* warm grey lifted for the dark field */
     --nav-line: rgba(255, 255, 255, 0.1);
-    --nav-spark: #6b78ff; /* spark lifted for a dark field (decorative mark) */
+    --nav-spark: #FFAA00; /* naranja — link hover / decorative mark */
     --nav-shadow:
       0 14px 34px -14px rgba(8, 8, 12, 0.62),
       0 3px 10px -6px rgba(8, 8, 12, 0.5);
@@ -250,18 +255,43 @@ const t = getUI(lang);
   .nav-brand {
     justify-self: start;
     display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    align-items: baseline;
+    gap: 0.45rem;
+    min-width: 0;
     color: var(--nav-ink);
     text-decoration: none;
   }
 
+  /* Display wordmark; the brackets are decorative CSS pseudo-elements, outside
+     the link's text. Some AT (Chromium-based) exposes generated content, so they
+     may still be announced by a few screen readers. */
   .nav-brand__word {
     font-family: var(--font-display);
     font-weight: 900;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     letter-spacing: -0.02em;
     line-height: 1;
+    white-space: nowrap;
+  }
+
+  .nav-brand__word::before {
+    content: '[';
+  }
+
+  .nav-brand__word::after {
+    content: ']';
+  }
+
+  /* Mono alias under the display wordmark. */
+  .nav-brand__alias {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    color: var(--nav-muted);
+    text-transform: lowercase;
+    white-space: nowrap;
   }
 
   /* --- Centre links ------------------------------------------------------ */
@@ -303,7 +333,7 @@ const t = getUI(lang);
   }
 
   .nav-links__list a:hover {
-    color: var(--trigger);
+    color: var(--nav-spark);
   }
 
   /* --- Utilities --------------------------------------------------------- */
@@ -535,10 +565,34 @@ const t = getUI(lang);
     }
   }
 
-  /* Very small widths: drop the clock so nothing crowds or overflows. */
+  /* Tablet band: the wordmark-only brand is what fits. With the alias visible
+     the nowrap brand overflows its `1fr` track and collides with the centre
+     links between ~701–754px (measured gap negative); it clears them from
+     ~820px up. Drop the alias before that so there is no overlap at any width,
+     and keep the mobile burger layout untouched. */
+  @media (max-width: 820px) {
+    .nav-brand__alias {
+      display: none;
+    }
+  }
+
+  /* Very small widths: drop the clock and trim the wordmark so the brand never
+     crowds the utils or overflows the bar. (The alias is already hidden by the
+     ≤820px rule above.) */
   @media (max-width: 480px) {
     .nav-clock {
       display: none;
+    }
+
+    .nav-brand__word {
+      font-size: 0.98rem;
+    }
+  }
+
+  /* Narrower still: shave the wordmark once more to keep 320–360px clean. */
+  @media (max-width: 380px) {
+    .nav-brand__word {
+      font-size: 0.9rem;
     }
   }
 

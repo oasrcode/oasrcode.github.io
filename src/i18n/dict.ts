@@ -45,7 +45,7 @@ function flatten(value: unknown, prefix: string, out: Dictionary): void {
 }
 
 /** Content keys derived from `content.ts`, matching the markup's data-i18n keys. */
-function content(lang: Locale, present: string): Dictionary {
+function content(lang: Locale): Dictionary {
   const d: Dictionary = {};
 
   d['profile.role'] = profile.role[lang];
@@ -70,11 +70,6 @@ function content(lang: Locale, present: string): Dictionary {
 
   skillGroups.forEach((group) => {
     d[`skillGroups.${group.id}.title`] = group.title[lang];
-    group.skills.forEach((skill, i) => {
-      if (skill.from) {
-        d[`skillGroups.${group.id}.skills.${i}.years`] = `${skill.from}–${skill.to ?? present}`;
-      }
-    });
   });
 
   education.forEach((item, i) => {
@@ -102,7 +97,7 @@ function build(lang: Locale): Dictionary {
   // UI (flattened) and content-derived key prefixes are disjoint by design, so
   // this merge stays collision-free; on any future collision the content-derived
   // keys win (Object.assign order).
-  Object.assign(out, content(lang, ui[lang].skills.present));
+  Object.assign(out, content(lang));
   return out;
 }
 

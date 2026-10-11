@@ -5,30 +5,35 @@
    ========================================================================== */
 
 :root {
-  /* Color — neutral anchor dominates (>=90%); vivid tones used sparingly. */
-  --base: #f3f4fb;    /* off-white periwinkle background (not pure white) */
-  --surface: #ffffff; /* raised surfaces / cards */
-  --ink: #1a1d26;     /* primary text */
-  --muted: #6b7180;   /* secondary text */
-  --line: #dcdde8;    /* hairlines / borders */
-  --spark: #2d3cf0;   /* dominant accent: links / CTAs */
-  --trigger: #ffb000; /* warm counterpoint, used sparingly */
-  --signal: #00a37a;  /* semantic / state */
+  /* Color — "Crema & Naranja". A warm cream ground with a volcanic orange as
+     the dominant accent (fills / buttons / bars) and an Atlantic blue as the
+     cool counterpoint (links / focus / secondary marks). Ink is near-black. */
+  --base: #fde8bf;    /* crema — warm off-white background */
+  --surface: #FFFCF4; /* lighter cream — raised surfaces / cards */
+  --ink: #191715;     /* negro — primary text */
+  --muted: #6E6357;   /* warm grey — secondary text */
+  --line: #E8D9BC;    /* hairlines / borders */
+  --spark: #FFAA00;   /* naranja — dominant accent: fills / buttons / bars */
+  --trigger: #008EAE; /* azul — cool counterpoint: links / focus / secondary */
+  --signal: #008EAE;  /* azul — semantic / "current" state */
 
-  /* Derived: --muted is 4.88:1 on --surface but only 4.45:1 on --base.
-     Small secondary text sitting on --base uses this darker mix to clear AA.
+  /* Derived: --muted is 5.71:1 on --surface and 5.33:1 on --base (both clear AA).
+     Small secondary text sitting on --base can still use this darker mix.
      (Derived via color-mix; the locked --muted value itself is unchanged.) */
   --muted-2: color-mix(in srgb, var(--muted) 78%, var(--ink));
 
   /* Project hues — one vivid colour per hue slot (generic, not tied to any
      particular project). Project cards pick their own hue via `Project.hueVar`.
-     All pair with white text (contrast >= 4.5:1 on the colour field). */
-  --project-gisec: #2d3cf0; /* vivid blue */
-  --project-sensor: #0b7285; /* deep teal */
-  --project-drago: #c2410c;  /* burnt orange */
+     Text on these fields uses the DARK --on-spark ink, so every hue must stay
+     light enough to keep it at >= 4.5:1: gisec 9.37:1, sensor 4.67:1,
+     drago 11.13:1 (dark ink on the colour field). */
+  --project-gisec: #FFAA00;  /* naranja */
+  --project-sensor: #008EAE; /* azul */
+  --project-drago: #FFC24D;  /* naranja claro — lightened so dark ink clears AA */
 
-  /* On-colour ink for text sitting on vivid fields. */
-  --on-spark: #ffffff;
+  /* On-colour ink for text sitting on vivid fields. Vivid fields are bright
+     (orange), so text on them must be DARK: --ink on --spark = 9.37:1. */
+  --on-spark: #191715;
 
   /* Typography — families (self-hosted, declared in fonts.css). */
   --font-display: 'CabinetGrotesk', sans-serif;
@@ -53,9 +58,37 @@
 
   /* Layout primitives. */
   --container: 74rem;              /* 1184px content shell */
-  --container-narrow: 44rem;       /* readable measure (~66ch) */
   --gutter: clamp(1.25rem, 5vw, 4.5rem);
   --section-y: clamp(4rem, 9vw, 8.5rem);
+
+  /* Dive environment — the page's single water column (the dive + the footer),
+     painted by `.sea` in index.astro. `.sea` begins exactly at the hero's bottom
+     (the waterline) and its last child is the footer, so this ONE gradient spans
+     both with no per-section bands and no sea→footer seam. The stops are ordered
+     and their luminance falls monotonically (surface ~22% -> floor ~6%), and
+     their hue stays within ~3deg of teal, so the scroll reads as a single dive.
+     `--dive-surface` MUST equal Hero's `--water-deep` (#0A5A66) so the hand-off
+     at the hero's waterline is seamless; the column lands on `--dive-floor`, the
+     dark-teal sea floor the footer sits on — so the dive continues past the
+     Skills/footer hand-off with no tonal step and no black block. The old
+     `--dive-abyss` near-black is kept only as the `.sea` gradient fallback. */
+  --dive-surface: #0A5A66;   /* 0%   — the hero's deep water (hand-off) */
+  --dive-upper: #08505C;     /* upper water column */
+  --dive-mid: #07454F;       /* luminous mid-water (the light-scatter band) */
+  --dive-petroleum: #05363E; /* petroleum */
+  --dive-deep: #032830;      /* deep */
+  --dive-floor: #082a30;     /* 100% — dark-teal sea floor (footer continues it) */
+  --dive-abyss: #02171C;     /* gradient fallback only (not the foot) */
+
+  /* Dive light falloff + hold geometry. `--dive-sun` is the faint surface
+     sunlight scatter, expressed as a colour-mix percentage of `--trigger` (so it
+     picks up the scoped aqua in `.sea`). It is capped low (was 10%) so the top
+     radial can't lighten the shallow water past the point where the
+     light-on-water secondary tokens stay AA-legible (see `.sea` in index.astro).
+     `--dive-hold` is the short flat hold that welds the sea's top to the hero's
+     water. */
+  --dive-sun: 6%;
+  --dive-hold: 2%;
 
   /* Shape. Intentionally small/technical, not pill-soft everywhere. */
   --radius-sm: 4px;

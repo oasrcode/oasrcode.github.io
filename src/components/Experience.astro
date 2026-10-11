@@ -15,10 +15,10 @@ const t = getUI(lang);
 
 <Section id="experience" title={t.sections.experience} i18nKey="sections.experience">
   <!-- Chronology: the only place numbered markers are justified.
-       The rail is a faint hairline track; a gradient stroke (spark -> trigger)
-       draws over it with scroll progress, led by a glowing head that lights
-       each entry's node as it passes. All of it is decoration — the list below
-       carries the real content and is always visible. -->
+       The rail is a faint hairline track; a solid --spark stroke draws over it
+       with scroll progress, led by a glowing head that lights each entry's node
+       as it passes. All of it is decoration — the list below carries the real
+       content and is always visible. -->
   <div class="timeline-wrap" data-timeline>
     <svg
       class="timeline-rail"
@@ -28,21 +28,6 @@ const t = getUI(lang);
       focusable="false"
     >
       <defs>
-        <!-- userSpaceOnUse: the path is a zero-width vertical line, so an
-             objectBoundingBox gradient would collapse. -->
-        <linearGradient
-          id="tl-rail-gradient"
-          class="timeline-rail__grad"
-          gradientUnits="userSpaceOnUse"
-          x1="1"
-          y1="0"
-          x2="1"
-          y2="100"
-        >
-          <stop class="tl-stop tl-stop--a" offset="0" />
-          <stop class="tl-stop tl-stop--b" offset="1" />
-        </linearGradient>
-
         <!-- Horizontal-only blur: the viewBox is 1:1 on X, so a 3-unit
              stdDeviation reads as a 3px halo and never smears the line. -->
         <filter
@@ -62,12 +47,7 @@ const t = getUI(lang);
       </defs>
 
       <path class="timeline-rail__track" d="M1 0 V100" />
-      <path
-        class="timeline-rail__lit"
-        data-rail-lit
-        d="M1 0 V100"
-        stroke="url(#tl-rail-gradient)"
-      />
+      <path class="timeline-rail__lit" data-rail-lit d="M1 0 V100" />
     </svg>
 
     <!-- Traveling comet head; positioned by transform, driven by scroll. -->
@@ -113,24 +93,18 @@ const t = getUI(lang);
     stroke-width: 1;
   }
 
-  /* The lit stroke: gradient + soft glow + rounded tip. Drawn by the effect.
-     A hair thicker than the 1px track so the "energised" state reads clearly. */
+  /* The lit stroke: solid accent + soft glow + rounded tip. Drawn by the
+     effect. A hair thicker than the 1px track so the "energised" state reads
+     clearly. */
   .timeline-rail__lit {
     fill: none;
+    stroke: var(--spark);
     stroke-width: 1.5;
     stroke-linecap: round;
     filter: url(#tl-rail-glow);
   }
 
-  .timeline-rail__grad .tl-stop--a {
-    stop-color: var(--spark);
-  }
-
-  .timeline-rail__grad .tl-stop--b {
-    stop-color: var(--trigger);
-  }
-
-  /* Comet head: a hot core with a blue halo and a fading tail trailing up. */
+  /* Comet head: a hot core with a warm halo and a fading tail trailing up. */
   .timeline-head {
     position: absolute;
     top: 0;
@@ -150,9 +124,9 @@ const t = getUI(lang);
       color-mix(in srgb, var(--spark) 88%, var(--trigger)) 100%
     );
     box-shadow:
-      0 0 0 2px color-mix(in srgb, var(--spark) 16%, transparent),
-      0 0 12px 2px color-mix(in srgb, var(--spark) 55%, transparent),
-      0 0 22px 7px color-mix(in srgb, var(--trigger) 20%, transparent);
+      0 0 0 2px color-mix(in srgb, var(--spark) 18%, transparent),
+      0 0 12px 2px color-mix(in srgb, var(--glow, var(--spark)) 55%, transparent),
+      0 0 22px 7px color-mix(in srgb, var(--glow, var(--spark)) 22%, transparent);
   }
 
   .timeline-head::after {

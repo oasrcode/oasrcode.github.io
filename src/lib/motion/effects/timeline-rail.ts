@@ -6,7 +6,7 @@ import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin';
  *
  * One ScrollTrigger owns a scrubbed progress value that drives everything in
  * lockstep:
- *   1. the gradient rail (--spark -> --trigger) draws over a faint track,
+ *   1. the solid --spark rail draws over a faint track,
  *   2. a comet head travels down the rail with the drawn tip,
  *   3. each entry's node lights as the head passes: hollow -> lit -> inked,
  *      and the entry's number settles from muted to ink.

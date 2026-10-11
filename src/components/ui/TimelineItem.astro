@@ -79,15 +79,23 @@ const highlights = item.highlights?.[lang];
     transform: translate(-50%, -50%) scale(1);
     box-shadow:
       0 0 0 3px color-mix(in srgb, var(--spark) 15%, transparent),
-      0 0 10px 1px color-mix(in srgb, var(--spark) 45%, transparent);
+      0 0 10px 1px color-mix(in srgb, var(--glow, var(--spark)) 48%, transparent);
   }
 
   .tl.is-active .tl__node {
-    background: #fff;
-    border-color: var(--spark);
+    /* Luminous core: a near-white centre falling to the aqua accent, with a
+       deeper cyan halo — the bioluminescent "present" marker. */
+    background: radial-gradient(
+      circle at 50% 42%,
+      #fff 0%,
+      color-mix(in srgb, var(--spark) 72%, #fff) 46%,
+      var(--spark) 100%
+    );
+    border-color: color-mix(in srgb, var(--spark) 80%, #fff);
     box-shadow:
       0 0 0 3px color-mix(in srgb, var(--spark) 22%, transparent),
-      0 0 14px 2px color-mix(in srgb, var(--spark) 60%, transparent);
+      0 0 14px 2px color-mix(in srgb, var(--glow, var(--spark)) 62%, transparent),
+      0 0 26px 6px color-mix(in srgb, var(--glow, var(--spark)) 22%, transparent);
   }
 
   .tl.is-passed .tl__node {

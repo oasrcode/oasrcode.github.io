@@ -5,14 +5,11 @@ import gsap from 'gsap';
  * Headings are opened by a clip-path inset wipe scrubbed to scroll progress.
  * Applied to every [data-wipe] heading on the page.
  *
- * The About pull-quote is also a [data-wipe], but it is deliberately excluded:
- * it reveals on a later, tighter window in `initQuoteBar` so the statement can
- * never be caught half-drawn as it enters the viewport.
+ * The About pull-quote is NOT a [data-wipe]: it reveals line by line in the
+ * one-shot `initStatement()` choreography, so it never reaches this effect.
  */
 export function initTitleWipe(): () => void {
-  const items = gsap.utils
-    .toArray<HTMLElement>('[data-wipe]')
-    .filter((el) => !el.querySelector('[data-quote-bar]'));
+  const items = gsap.utils.toArray<HTMLElement>('[data-wipe]');
 
   const tweens = items.map((el) =>
     gsap.fromTo(

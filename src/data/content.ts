@@ -20,6 +20,8 @@ export interface UI {
   meta: {
     title: string;
     description: string;
+    /** og:locale tag the runtime switcher applies (server default stays es_ES). */
+    ogLocale: string;
   };
   skipLink: string;
   nav: {
@@ -50,6 +52,10 @@ export interface UI {
     github: string;
     githubAria: string;
     valuePropAria: string;
+    /** Giant ALL-CAPS editorial statement in the hero. */
+    statement: string;
+    /** Bracketed "[ Perfil ]" marker labelling the value-prop column. */
+    profileLabel: string;
   };
   sections: {
     about: string;
@@ -71,20 +77,21 @@ export interface UI {
     emptyCta: string;
     emptyCtaAria: string;
   };
-  skills: {
-    present: string;
-  };
   footer: {
     socials: string;
     linkedin: string;
     github: string;
     rights: string;
+    /** Specialities line stacked under the signature. */
+    disciplines: string;
   };
 }
 
 export interface Profile {
-  /** Wordmark shown in the nav. */
+  /** Wordmark shown in the nav (the full display name). */
   wordmark: string;
+  /** Short handle / alias shown beside the wordmark. */
+  alias: string;
   /** Full legal name — hero headline. */
   name: string;
   role: L<string>;
@@ -121,9 +128,6 @@ export interface Project {
 
 export interface Skill {
   name: string;
-  /** Optional start/end year. Omit `to` for "present". */
-  from?: string;
-  to?: string;
 }
 
 export interface SkillGroup {
@@ -144,7 +148,8 @@ export interface LanguageItem {
 }
 
 export const profile: Profile = {
-  wordmark: 'oasr',
+  wordmark: 'Aythami Santana',
+  alias: 'oasrcode',
   name: 'Aythami Santana',
   role: {
     es: 'Desarrollador Full Stack',
@@ -155,7 +160,7 @@ export const profile: Profile = {
     en: 'Las Palmas de Gran Canaria, Spain',
   },
   valueProp: {
-    es: 'Uno frontend, backend y datos para convertir información compleja en herramientas útiles.',
+    es: 'Conecto frontend, backend y datos para convertir información compleja en herramientas útiles.',
     en: 'I connect frontend, backend and data to turn complex information into useful tools.',
   },
   github: 'https://github.com/oasrcode',
@@ -169,13 +174,13 @@ export const profile: Profile = {
  * as the display pull-quote (`manifesto`); the remaining text stays as body.
  * Wording is unchanged — the sentence is only moved, never rewritten.
  *
- * `manifesto` is split around the accented phrase so the signature gradient bar
+ * `manifesto` is split around the accented phrase so the signature accent bar
  * can be drawn under exactly that phrase on reveal.
  */
 export interface ManifestoCopy {
   /** Statement before the accented phrase. */
   lead: string;
-  /** Phrase the signature gradient bar is drawn under. */
+  /** Phrase the signature accent bar is drawn under. */
   accent: string;
   /** Statement after the accented phrase. */
   tail: string;
@@ -191,26 +196,26 @@ export interface AboutCopy {
 export const about: AboutCopy = {
   body: {
     es: [
-      'Desarrollador Full Stack con experiencia en aplicaciones web, APIs, sistemas de información geográfica e integración de datos en tiempo real. Trabajo en proyectos para los sectores de emergencias, seguridad pública, sanidad e industria, desarrollando frontend y backend e integrando servicios, sensores y distintas fuentes de información.',
-      'Manejo JavaScript/TypeScript, Angular, C#/.NET, Node.js, bases de datos, APIs REST, MQTT y tecnologías de mapas como MapLibre GL y Leaflet, además de datos de organismos como DGT, AEMET e IGN, sistemas de posicionamiento TETRA y plataformas basadas en FIWARE.',
-      'Me interesa especialmente desarrollar soluciones que conecten distintas tecnologías y fuentes de datos.',
+      'Soy desarrollador Full Stack especializado en aplicaciones web, sistemas de emergencia, GIS e integración de datos en tiempo real.',
+      'He trabajado en proyectos de emergencia, seguridad pública, sanidad e industria, desarrollando soluciones que conectan interfaces, servicios y distintas fuentes de información.',
+      'Me interesa especialmente transformar problemas complejos en herramientas claras, visuales y útiles para quienes las utilizan.',
     ],
     en: [
-      'Full Stack developer experienced in web applications, APIs, geographic information systems and real-time data integration. I work on projects for the emergency, public safety, healthcare and industry sectors, building both frontend and backend and integrating services, sensors and different data sources.',
-      'I work with JavaScript/TypeScript, Angular, C#/.NET, Node.js, databases, REST APIs, MQTT and map technologies such as MapLibre GL and Leaflet, along with data from agencies such as DGT, AEMET and IGN, TETRA positioning systems and FIWARE-based platforms.',
-      'I am especially interested in building solutions that connect different technologies and data sources.',
+      'I’m a Full Stack developer specialised in web applications, emergency systems, GIS and real-time data integration.',
+      'I’ve worked on projects in emergency services, public safety, healthcare and industry, building solutions that connect interfaces, services and different sources of information.',
+      'I’m especially interested in turning complex problems into clear, visual and useful tools for the people who use them.',
     ],
   },
   manifesto: {
     es: {
-      lead: 'Convertir información compleja en ',
-      accent: 'aplicaciones útiles',
-      tail: ', visuales y orientadas a las necesidades reales del usuario.',
+      lead: 'Datos complejos. ',
+      accent: 'Aplicaciones que se entienden',
+      tail: '.',
     },
     en: {
-      lead: 'Turn complex information into ',
-      accent: 'useful, visual applications',
-      tail: ' focused on people’s real needs.',
+      lead: 'Complex data. ',
+      accent: 'Applications that make sense',
+      tail: '.',
     },
   },
 };
@@ -223,29 +228,21 @@ export const experience: ExperienceItem[] = [
     period: { es: 'Marzo 2023 – Actualidad', en: 'March 2023 – Present' },
     current: true,
     summary: {
-      es: 'Desarrollo en GISECloud, una plataforma de gestión de emergencias y seguridad pública, y en plataformas de monitorización por sensores y vídeo.',
-      en: 'Development on GISECloud, an emergency management and public safety platform, and on sensor and video monitoring platforms.',
+      es: 'Desarrollo de aplicaciones para la gestión de emergencias, la seguridad pública y la monitorización de sistemas en tiempo real.',
+      en: 'Building applications for emergency management, public safety and real-time system monitoring.',
     },
     highlights: {
       es: [
-        'Gestión de incidentes e identificaciones dentro de la aplicación.',
-        'Funcionalidades de mapas con MapLibre GL y Leaflet.',
-        'Visualización y seguimiento de unidades con información TETRA.',
-        'Avisos y comunicaciones en tiempo real mediante MQTT.',
-        'Integración de servicios de DGT, AEMET e IGN durante la gestión de incidencias.',
-        'Informes y dashboards con Power BI.',
-        'Plataforma de monitorización de sensores atmosféricos, acuáticos y de maquinaria naval bajo el estándar FIWARE, y video vigilancia con OpenCV y YOLO para el control de EPIs.',
-        'Mantenimiento y nuevas funcionalidades en DRAGO AP, app de gestión de los centros de salud del Servicio Canario de Salud.',
+        'Gestión de incidencias, cartografía GIS y seguimiento de unidades mediante MapLibre GL, Leaflet y TETRA.',
+        'Comunicaciones en tiempo real con MQTT e integración de servicios de DGT, AEMET e IGN.',
+        'Monitorización de sensores con FIWARE, cuadros de mando y soluciones de visión artificial con OpenCV y YOLO.',
+        'Desarrollo y mantenimiento de funcionalidades para GISECloud y DRAGO AP.',
       ],
       en: [
-        'Incident and identification management inside the application.',
-        'Map features built with MapLibre GL and Leaflet.',
-        'Unit visualisation and tracking with TETRA data.',
-        'Real-time alerts and communications over MQTT.',
-        'Integration of DGT, AEMET and IGN services during incident management.',
-        'Reports and dashboards with Power BI.',
-        'Monitoring platform for atmospheric, water and naval-machinery sensors under the FIWARE standard, plus video surveillance with OpenCV and YOLO for PPE control.',
-        'Maintenance and new features on DRAGO AP, the app managing the Canary Islands Health Service health centres.',
+        'Incident management, GIS mapping and unit tracking with MapLibre GL, Leaflet and TETRA.',
+        'Real-time communications over MQTT and integration of DGT, AEMET and IGN services.',
+        'Sensor monitoring with FIWARE, dashboards and computer-vision solutions with OpenCV and YOLO.',
+        'Development and maintenance of features for GISECloud and DRAGO AP.',
       ],
     },
   },
@@ -253,25 +250,13 @@ export const experience: ExperienceItem[] = [
     id: 'freelance',
     company: 'Freelance',
     role: {
-      es: 'Gestor de plataformas educativas, creador de material educativo y publicitario',
-      en: 'Educational platform manager, educational and promotional content creator',
+      es: 'Plataformas educativas y diseño de contenidos',
+      en: 'Educational platforms and content design',
     },
     period: { es: 'Julio 2020 – Noviembre 2023', en: 'July 2020 – November 2023' },
     summary: {
-      es: 'Desarrollo de material educativo interactivo con SCORM y eXeLearning, creación de material publicitario y gestión de las plataformas educativas.',
-      en: 'Interactive educational content built with SCORM and eXeLearning, promotional material and management of the learning platforms.',
-    },
-    highlights: {
-      es: [
-        'Alta y gestión de alumnos y profesores.',
-        'Subida y organización de contenidos y mantenimiento de la plataforma.',
-        'Material gráfico con Adobe Illustrator y Photoshop.',
-      ],
-      en: [
-        'Student and teacher onboarding and management.',
-        'Uploading and organising content, and platform maintenance.',
-        'Graphic material with Adobe Illustrator and Photoshop.',
-      ],
+      es: 'Gestión de entornos de formación en línea, desarrollo de materiales interactivos con SCORM y eXeLearning y creación de recursos gráficos y publicitarios.',
+      en: 'Management of online learning environments, interactive materials built with SCORM and eXeLearning, and creation of graphic and promotional resources.',
     },
   },
   {
@@ -280,8 +265,8 @@ export const experience: ExperienceItem[] = [
     role: { es: 'Gestor de Plataforma Moodle', en: 'Moodle Platform Manager' },
     period: { es: 'Mayo 2020 – Julio 2020', en: 'May 2020 – July 2020' },
     summary: {
-      es: 'Gestión de plataformas Moodle para cursos del SEPE: cursos, contenidos y usuarios, y las tareas necesarias para mantener la plataforma en funcionamiento.',
-      en: 'Management of Moodle platforms for SEPE courses: courses, content and users, and the work needed to keep the platform running.',
+      es: 'Administración y mantenimiento de plataformas formativas: gestión de cursos, usuarios, contenidos y soporte operativo.',
+      en: 'Administration and maintenance of learning platforms: course, user and content management, and operational support.',
     },
   },
   {
@@ -290,8 +275,8 @@ export const experience: ExperienceItem[] = [
     role: { es: 'Desarrollador de Videojuegos y Formador', en: 'Game Developer and Trainer' },
     period: { es: 'Noviembre 2018 – Diciembre 2019', en: 'November 2018 – December 2019' },
     summary: {
-      es: 'Desarrollo de videojuegos educativos con Unity 3D y C# para el Servicio Canario de Empleo, creación de contenidos SCORM y tareas en plataformas Moodle.',
-      en: 'Educational games built with Unity 3D and C# for the Canary Islands Employment Service, SCORM content creation and work on Moodle platforms.',
+      es: 'Desarrollo de videojuegos educativos con Unity 3D y C#, elaboración de contenidos SCORM y apoyo en plataformas de formación.',
+      en: 'Educational games built with Unity 3D and C#, SCORM content production and support on learning platforms.',
     },
   },
 ];
@@ -313,9 +298,9 @@ export const skillGroups: SkillGroup[] = [
     id: 'frontend',
     title: { es: 'Frontend', en: 'Frontend' },
     skills: [
-      { name: 'JavaScript / TypeScript', from: '2020' },
-      { name: 'Angular', from: '2023' },
-      { name: 'Tailwind CSS', from: '2023' },
+      { name: 'JavaScript / TypeScript' },
+      { name: 'Angular' },
+      { name: 'Tailwind CSS' },
       { name: 'HTML / CSS' },
     ],
   },
@@ -323,10 +308,10 @@ export const skillGroups: SkillGroup[] = [
     id: 'backend',
     title: { es: 'Backend', en: 'Backend' },
     skills: [
-      { name: 'C# / .NET', from: '2018' },
+      { name: 'C# / .NET' },
       { name: 'Node.js / Express' },
       { name: 'REST APIs / MVC / WSDL' },
-      { name: 'MQTT', from: '2023' },
+      { name: 'MQTT' },
     ],
   },
   {
@@ -334,15 +319,15 @@ export const skillGroups: SkillGroup[] = [
     title: { es: 'Datos y GIS', en: 'Data & GIS' },
     skills: [
       { name: 'PostgreSQL / MongoDB / CrateDB' },
-      { name: 'MapLibre GL', from: '2023' },
-      { name: 'Leaflet', from: '2023' },
-      { name: 'FIWARE', from: '2023' },
-      { name: 'Power BI', from: '2023' },
+      { name: 'MapLibre GL' },
+      { name: 'Leaflet' },
+      { name: 'FIWARE' },
+      { name: 'Power BI' },
       { name: 'Grafana' },
-      { name: 'DGT', from: '2023' },
-      { name: 'AEMET', from: '2023' },
-      { name: 'IGN', from: '2023' },
-      { name: 'TETRA', from: '2023' },
+      { name: 'DGT' },
+      { name: 'AEMET' },
+      { name: 'IGN' },
+      { name: 'TETRA' },
     ],
   },
   {
@@ -351,10 +336,10 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       { name: 'Git / Azure' },
       { name: 'Jira / Teams' },
-      { name: 'Unity 3D', from: '2018', to: '2019' },
-      { name: 'SCORM / eXeLearning', from: '2020', to: '2023' },
-      { name: 'Moodle', from: '2018', to: '2020' },
-      { name: 'Illustrator / Photoshop', from: '2020' },
+      { name: 'Unity 3D' },
+      { name: 'SCORM / eXeLearning' },
+      { name: 'Moodle' },
+      { name: 'Illustrator / Photoshop' },
     ],
   },
 ];
@@ -396,11 +381,12 @@ export const ui: Record<Locale, UI> = {
       title: 'Aythami Santana — Desarrollador Full Stack',
       description:
         'Desarrollador Full Stack en Las Palmas de Gran Canaria. Aplicaciones web, APIs, GIS e integración de datos en tiempo real para emergencias, seguridad pública, sanidad e industria.',
+      ogLocale: 'es_ES',
     },
     skipLink: 'Saltar al contenido',
     nav: {
       ariaLabel: 'Navegación principal',
-      work: 'Portfolio',
+      work: 'Proyectos',
       linkedin: 'LinkedIn',
       linkedinAria: 'Perfil de LinkedIn de Aythami Santana (se abre en una pestaña nueva)',
       github: 'GitHub',
@@ -421,35 +407,35 @@ export const ui: Record<Locale, UI> = {
       github: 'GitHub',
       githubAria: 'Perfil de GitHub de Aythami Santana (se abre en una pestaña nueva)',
       valuePropAria: 'Resumen profesional',
+      statement: 'Desarrollo web · datos · GIS',
+      profileLabel: 'Perfil',
     },
     sections: {
       about: 'Sobre mí',
       experience: 'Experiencia',
-      portfolio: 'Portfolio',
-      skills: 'Skills',
+      portfolio: 'Proyectos',
+      skills: 'Tecnologías',
       education: 'Formación',
       languages: 'Idiomas',
     },
     experience: {
-      highlightsLabel: 'Responsabilidades principales',
+      highlightsLabel: 'Áreas de trabajo',
     },
     projects: {
       stackLabel: 'Tecnologías',
       soon: 'Detalles próximamente',
       view: 'Ver proyecto',
       emptyLead:
-        'Estoy preparando esta sección. Mientras tanto, podés explorar mi código en GitHub.',
+        'Estoy preparando esta sección. Mientras tanto, puedes explorar mi código en GitHub.',
       emptyCta: 'Ver mi GitHub',
       emptyCtaAria: 'Perfil de GitHub de Aythami Santana (se abre en una pestaña nueva)',
-    },
-    skills: {
-      present: 'hoy',
     },
     footer: {
       socials: 'Redes',
       linkedin: 'LinkedIn',
       github: 'GitHub',
       rights: 'Todos los derechos reservados.',
+      disciplines: 'Web · Datos · GIS',
     },
   },
   en: {
@@ -457,6 +443,7 @@ export const ui: Record<Locale, UI> = {
       title: 'Aythami Santana — Full Stack Developer',
       description:
         'Full Stack developer based in Las Palmas de Gran Canaria. Web apps, APIs, GIS and real-time data integration for emergency, public safety, healthcare and industry.',
+      ogLocale: 'en_US',
     },
     skipLink: 'Skip to content',
     nav: {
@@ -482,6 +469,8 @@ export const ui: Record<Locale, UI> = {
       github: 'GitHub',
       githubAria: 'Aythami Santana’s GitHub profile (opens in a new tab)',
       valuePropAria: 'Professional summary',
+      statement: 'Web development · data · GIS',
+      profileLabel: 'Profile',
     },
     sections: {
       about: 'About',
@@ -492,7 +481,7 @@ export const ui: Record<Locale, UI> = {
       languages: 'Languages',
     },
     experience: {
-      highlightsLabel: 'Key responsibilities',
+      highlightsLabel: 'Areas of work',
     },
     projects: {
       stackLabel: 'Stack',
@@ -503,14 +492,12 @@ export const ui: Record<Locale, UI> = {
       emptyCta: 'View my GitHub',
       emptyCtaAria: 'Aythami Santana’s GitHub profile (opens in a new tab)',
     },
-    skills: {
-      present: 'now',
-    },
     footer: {
       socials: 'Socials',
       linkedin: 'LinkedIn',
       github: 'GitHub',
       rights: 'All rights reserved.',
+      disciplines: 'Web · Data · GIS',
     },
   },
 };

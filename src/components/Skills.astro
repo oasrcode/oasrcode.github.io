@@ -11,26 +11,18 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getUI(lang);
-
-const years = (from?: string, to?: string) =>
-  from ? `${from}–${to ?? t.skills.present}` : undefined;
 ---
 
 <Section id="skills" title={t.sections.skills} i18nKey="sections.skills">
   <div class="skills" data-stagger>
     {skillGroups.map((group) => (
-      <div class="skill-group">
+      <div class="skill-group" data-stagger-group>
         <h3 class="skill-group__title" data-i18n={`skillGroups.${group.id}.title`}>
           {group.title[lang]}
         </h3>
         <ul class="skill-group__list">
-          {group.skills.map((skill, i) => (
-            <Tag
-              label={skill.name}
-              years={years(skill.from, skill.to)}
-              yearsKey={skill.from ? `skillGroups.${group.id}.skills.${i}.years` : undefined}
-              stagger
-            />
+          {group.skills.map((skill) => (
+            <Tag label={skill.name} magnetic />
           ))}
         </ul>
       </div>

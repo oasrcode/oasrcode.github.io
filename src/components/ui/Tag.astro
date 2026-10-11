@@ -1,20 +1,15 @@
 ---
 interface Props {
   label: string;
-  /** Optional year range shown after the name, e.g. "2023–now". */
-  years?: string;
-  /** Opt into the one-time staggered reveal on the Home skills grid. */
-  stagger?: boolean;
-  /** i18n key for the year range (swapped client-side). */
-  yearsKey?: string;
+  /** Opt into the magnetic-cursor drift (desktop fine-pointer only). */
+  magnetic?: boolean;
 }
 
-const { label, years, stagger = false, yearsKey } = Astro.props;
+const { label, magnetic = false } = Astro.props;
 ---
 
-<li class="tag" data-stagger-item={stagger ? '' : undefined}>
+<li class="tag" data-magnetic={magnetic ? '' : undefined}>
   <span class="tag__name">{label}</span>
-  {years && <span class="tag__years" data-i18n={yearsKey}>{years}</span>}
 </li>
 
 <style>
@@ -26,14 +21,12 @@ const { label, years, stagger = false, yearsKey } = Astro.props;
     border: 1px solid var(--line);
     border-radius: var(--radius-sm);
     background: var(--surface);
+    /* A faint lit top edge so the translucent chip reads as a surface catching
+       the dive's light rather than a flat outline. */
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--spark) 12%, transparent);
     font-family: var(--font-mono);
     font-size: var(--text-tag);
     line-height: 1.4;
     color: var(--ink);
-  }
-
-  .tag__years {
-    color: var(--muted);
-    font-size: 0.85em;
   }
 </style>

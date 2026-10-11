@@ -1,96 +1,491 @@
 ---
-import type { Locale } from '../data/content';
-import { profile } from '../data/content';
-import { getUI } from '../i18n';
+import rawSignature from "../../assets/signature/firma_editable.svg?raw";
+import type { Locale } from "../data/content";
+import { profile } from "../data/content";
+import { getUI } from "../i18n";
+// Decorative end-of-dive art. The seabed/coral silhouette is the footer's single
+// sea-floor layer: one transparent-sky image, scaled to cover the footer from the
+// bottom up so its sky is cropped off and the coral keeps its full height as a
+// backdrop. Both assets are pre-optimized binaries referenced DIRECTLY (no
+// astro:assets re-encoding at render time): AVIF for capable browsers, WebP as
+// the fallback. The AVIF is generated one-off from the lossless PNG (sharp):
+// width 1920, quality 55 (~54 KB); never the raw ~1 MB PNG.
+import seabedAvif from "../../assets/recursos/fondo-marino.avif";
+import seabedWebp from "../../assets/recursos/fondo-marino.webp";
 
 interface Props {
   lang: Locale;
 }
 
-const { lang = 'es' } = Astro.props;
+const { lang = "es" } = Astro.props;
 const t = getUI(lang);
 
 const year = new Date().getFullYear();
+
+// Root-only adjustment for inline + accessible embedding: strip the fixed size
+// so CSS drives the box off the authored viewBox (2048 x 682, ~3:1), and make
+// the decorative graphic presentation-only. Geometry, the per-stroke <mask>s
+// and the `fill="#000000"` silhouettes are copied through unchanged — the gold
+// recolour happens in CSS below. Everything else is byte-for-byte from the
+// authored asset (never altered on disk).
+const inlineSignature = rawSignature
+  .replace(/^<\?xml[^>]*\?>\s*/, "")
+  .replace(
+    'role="img"',
+    'role="presentation" aria-hidden="true" focusable="false"',
+  )
+  .replace(/\saria-labelledby="titulo descripcion"/, "")
+  .replace(/\swidth="2048"\sheight="682"/, "");
 ---
 
 <!--
-  Minimal footer: copyright on the left, the two social profiles on the right.
-  No contact block: the only channels are LinkedIn and GitHub, and the hero
-  already carries the primary CTAs.
--->
-<footer class="site-footer">
-  <div class="container site-footer__row">
-    <p class="site-footer__credit">
-      © {year} {profile.name}. <span data-i18n="footer.rights">{t.footer.rights}</span>
-    </p>
+  End of the dive. The footer is the deliberate close of the page's continuous
+  immersion: it is the LAST child of `.sea`, so the dive's single water gradient
+  runs straight through it and lands on the dark-teal sea floor (`--dive-floor`)
+  at the page's foot — no separate footer background, no seam, no band, no black
+  block. One decorative sea-floor layer — a seabed/coral silhouette — fills the
+  whole footer as a backdrop (aria-hidden, pointer-events:none, behind the
+  content); its transparent sky is cropped away, so the coral reads as starting
+  right below the sea. The sign-off is laid OVER the coral, near the floor —
+  three zones on one row (stacking on narrow viewports): the gold signature over
+  one uppercase role line, the copyright flanked by two thin rules, and the two
+  social links split by a thin vertical divider. A gentle bottom scrim keeps
+  every text tone at AA over the composed scene.
 
+  `role="contentinfo"` is explicit because the footer now lives inside `<main>`
+  (so the gradient can span it), where the implicit contentinfo landmark would
+  otherwise be dropped.
+-->
+<footer class="site-footer" role="contentinfo">
+  <!-- Decorative sea-floor scene: one full-bleed layer filling the whole footer
+       as a backdrop — aria-hidden, never focusable, never intercepting a pointer,
+       seated behind the in-flow sign-off content. The image is scaled to cover
+       the footer box from the bottom up (object-position: center bottom); the box
+       is deliberately shorter than the art's full 724px height, so the
+       transparent sky is cropped off and the coral reads as starting right below
+       the sea. The coral silhouette itself is never cropped vertically — its
+       complete height stays in view. -->
+  <div class="site-footer__scene" aria-hidden="true">
+    <picture>
+      <source srcset={seabedAvif.src} type="image/avif" />
+      <img
+        src={seabedWebp.src}
+        alt=""
+        width="2172"
+        height="724"
+        loading="lazy"
+        decoding="async"
+      />
+    </picture>
+  </div>
+
+  <div class="container site-footer__row">
+    <!-- Left zone: the gold signature leading one uppercase role line. -->
+    <div class="site-footer__identity">
+      <div
+        class="site-footer__signature"
+        aria-hidden="true"
+        set:html={inlineSignature}
+      />
+      <p class="site-footer__role">
+        <span data-i18n="profile.role">{profile.role[lang]}</span>
+        <span class="site-footer__sep" aria-hidden="true">·</span>
+        <span
+          class="site-footer__disciplines"
+          data-i18n="footer.disciplines"
+          >{t.footer.disciplines}</span
+        >
+      </p>
+    </div>
+
+    <!-- Center zone: the copyright, flanked by a thin rule on either side. -->
+    <div class="site-footer__legal">
+      <span class="site-footer__rule" aria-hidden="true"></span>
+      <p class="site-footer__copyright">© {year} {profile.name}. <span data-i18n="footer.rights">{t.footer.rights}</span></p>
+      <span class="site-footer__rule" aria-hidden="true"></span>
+    </div>
+
+    <!-- Right zone: the two social links, split by a thin vertical divider. -->
     <div class="site-footer__meta">
       <nav
         class="site-footer__links"
         aria-label={t.footer.socials}
         data-i18n-attr="aria-label:footer.socials"
       >
-        <a
-          href={profile.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-i18n="footer.linkedin">{t.footer.linkedin}</a
-        >
-        <a
-          href={profile.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-i18n="footer.github">{t.footer.github}</a
-        >
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+          <span data-i18n="footer.linkedin">{t.footer.linkedin}</span>
+          <span class="site-footer__arrow" aria-hidden="true">↗</span>
+        </a>
+        <span class="site-footer__divider" aria-hidden="true"></span>
+        <a href={profile.github} target="_blank" rel="noopener noreferrer">
+          <span data-i18n="footer.github">{t.footer.github}</span>
+          <span class="site-footer__arrow" aria-hidden="true">↗</span>
+        </a>
       </nav>
     </div>
   </div>
 </footer>
 
 <style>
+  /* --- End of the dive ---------------------------------------------------
+     The footer is the page's sea floor: it is the last child of `.sea`, so the
+     dive's single water gradient runs straight through it and lands on the
+     global `--dive-floor` at the foot — one continuous descent. One decorative
+     layer fills the whole footer box — the seabed/coral silhouette
+     (pre-optimized AVIF with a WebP fallback, never the raw ~1 MB PNG) — scaled
+     to cover from the bottom up
+     while its transparent sky is cropped away, so the coral meets the sea above
+     with no band and the sign-off sits ON the coral near the floor.
+
+     The footer is now a DESCENDANT of `.sea`, so it inherits the dive's scoped
+     tokens (`--spark`, `--glow`, `--ink`, `--muted`, `--trigger`, …) — only its
+     own extras are declared locally. `tokens.css` is untouched. A bottom scrim
+     (below) keeps every text tone at AA over the composed scene; the coral is
+     itself near-black (measured avg luminance ~0.009 → ink ~14:1), so the scrim
+     only has to tame the art's sparse bright cyan specks while letting the floor
+     teal read through. */
   .site-footer {
-    border-top: 1px solid var(--line);
-    padding-block: clamp(1.5rem, 4vw, 2.25rem);
-    background: var(--surface);
+    --footer-ink: #d9a441; /* light-on-water primary text (= .sea --ink) */
+    --footer-muted: #d2e6e7; /* secondary text, AA 12.3:1 on the floor */
+    --footer-gold: #d9a441; /* the signature's warm gold (the close's one hue) */
+    --footer-line: rgba(234, 246, 245, 0.16);
+
+    position: relative;
+    isolation: isolate; /* keep the scene's layer inside the footer */
+    overflow: hidden; /* clip the full-bleed art to the footer box */
+    /* The sign-off stays in flow (so it always fits) but is pinned to the floor;
+       the scene is the absolute backdrop filling whatever height results. */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    /* The coral is full-bleed; the footer box is deliberately kept to the CROPPED
+       ratio of the art (2172x606 — its transparent sky removed) so `cover` crops
+       exactly that sky at desktop widths. The floor keeps the stacked mobile
+       sign-off from ever overflowing the scene. */
+    min-height: max(15rem, calc(100vw * 606 / 2172));
+    /* No top inset: the scene starts flush against the sea. The bottom padding
+       clears the sign-off from the page edge. */
+    padding-block: 0 clamp(1.75rem, 4vw, 2.75rem);
+    /* No background of its own: the footer is transparent and shows the tail of
+       `.sea`'s single water gradient (which lands on `--dive-floor` at 100%).
+       Sea and footer are therefore ONE continuous gradient with no seam at their
+       boundary. */
+    color: var(--footer-ink);
+  }
+
+  /* --- Decorative sea-floor layer --------------------------------------
+     One full-bleed layer filling the whole footer (`inset:0`), inert
+     (aria-hidden + pointer-events:none) and seated behind the in-flow sign-off
+     (the scrim sits at z-index:1 and `__row` at z-index:2), so it paints over the
+     floor-teal background and behind the content. */
+  .site-footer__scene {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /* The hand-written <picture>/<img> are element nodes painted by this file's
+     markup, reached through :global() because Astro scopes the wrapper only. The
+     art covers the footer box from the bottom up; because the box is kept shorter
+     than the art's full 724px height, `cover` crops the transparent top (the sky)
+     while the coral silhouette keeps its complete height. */
+  .site-footer__scene :global(picture),
+  .site-footer__scene :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .site-footer__scene :global(img) {
+    object-fit: cover;
+    object-position: center bottom;
+  }
+
+  /* --- Scrim: legibility over the coral --------------------------------
+     A soft, full-bleed darkening of the lower band, between the scene (z 0) and
+     the sign-off (z 2). The coral is near-black already, so this only has to tame
+     the art's sparse bright cyan specks. It is tinted to the floor teal — not the
+     old near-black — and capped low (~0.30), so the footer keeps reading as the
+     floor teal instead of crushing back to a black block; it stays light toward
+     the top so the coral silhouette still reads behind the sign-off. Light footer
+     text sits over the scrim + coral, so AA holds comfortably. */
+  .site-footer::before {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 76%;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to top,
+      rgba(4, 38, 45, 0.3) 0,
+      rgba(4, 38, 45, 0.22) 32%,
+      rgba(4, 38, 45, 0.08) 66%,
+      transparent 100%
+    );
   }
 
   .site-footer__row {
-    display: flex;
-    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+    /* Pinned to the floor of the footer (flex parent), so the sign-off sits over
+       the coral rather than pushing the footer taller than the scene. */
+    margin-top: auto;
+    padding-top: clamp(1.25rem, 3.5vw, 2.5rem);
+    display: grid;
+    /* The side zones size to their content (`auto`) while the centre absorbs the
+       remainder (`minmax(0,1fr)`), so the left role line stays on one line and
+       the legal line stays centred between its two rules. `minmax(0,1fr)` lets
+       every zone shrink gracefully instead of overflowing on tighter widths. */
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem 1.5rem;
+    gap: clamp(0.875rem, 2.2vw, 1.75rem);
   }
 
-  .site-footer__credit {
+  /* --- Localized legibility scrim behind the sign-off row ----------------
+     The footer-wide scrim above only reaches ~0.30. That is enough for the
+     near-black coral, but not for the art's sparse BRIGHT cyan specks (brightest
+     composite ≈ [74,169,176], luminance ≈ 0.33): a gold glyph landing on one
+     would collapse to ~1.2:1. This band is tied to the sign-off row's own box —
+     NOT full-bleed — so it darkens only the strip the text occupies while the
+     coral still reads above and below it. It is a decorative pseudo-element
+     inside the row's stacking context at z-index:-1, i.e. between the
+     footer-wide scrim (z 1) and the row content (z 2); it is inert
+     (pointer-events:none) and is never animated. The tint matches the floor teal
+     of the footer-wide scrim; its core is strong enough to hold gold #d9a441
+     ≥ 4.5:1 over the brightest speck, fading softly out toward the edges. */
+  .site-footer__row::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -3rem -4vw -3.5rem;
+    pointer-events: none;
+    /* Vertical band: a strong plateau that fully covers the text band (from the
+       signature's cap-height down to the role line's baseline), with soft ramps
+       above and below. The plateau is UNIFORM left-to-right (a radial would fade
+       out where the gold links sit at the row's right edge), and the horizontal
+       mask feathers the band's side edges so it never reads as a hard rectangle. */
+    background: linear-gradient(
+      to bottom,
+      rgba(4, 38, 45, 0) 0%,
+      rgba(4, 38, 45, 0.55) 12%,
+      rgba(4, 38, 45, 0.82) 24%,
+      rgba(4, 38, 45, 0.82) 88%,
+      rgba(4, 38, 45, 0.5) 96%,
+      rgba(4, 38, 45, 0) 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 7%,
+      #000 93%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      #000 7%,
+      #000 93%,
+      transparent 100%
+    );
+  }
+
+  /* --- Left zone ------------------------------------------------------- */
+  /* Stacked: the signature over the single uppercase role line. */
+  .site-footer__identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(0.55rem, 1.6vw, 0.9rem);
+    min-width: 0;
+  }
+
+  /* The inlined SVG is injected as-is (its nodes carry no scope attribute), so
+     it is targeted through :global(). Sized as a sign-off, not the hero. */
+  .site-footer__signature {
+    width: clamp(7rem, 20vw, 20rem);
+    line-height: 0;
+  }
+
+  .site-footer__signature :global(svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2048 / 682;
+  }
+
+  /* The authored silhouettes are `fill="#000000"`; recolour them to warm gold
+     (CSS overrides the presentation attribute). The white `stroke="#fff"` paths
+     are the luminance <mask> content that reveals these silhouettes: they never
+     render on their own, so they are left exactly as authored. */
+  .site-footer__signature :global(.tinta) {
+    fill: var(--footer-gold);
+  }
+
+  /* One uppercase gold line under the signature: a short leading dash, then
+     `role · disciplines`. It is a flex row so the dash is a real rule and the
+     separator holds its spacing while the client i18n switcher rewrites the two
+     text spans (`profile.role` / `footer.disciplines`) in place. */
+  .site-footer__role {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
     margin: 0;
-    color: var(--muted);
-    font-size: var(--text-small);
+    color: var(--footer-gold);
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
 
+  .site-footer__role::before {
+    content: "";
+    flex: none;
+    width: clamp(1rem, 3vw, 2rem);
+    height: 1px;
+    background: var(--footer-gold);
+  }
+
+  .site-footer__sep {
+    color: var(--footer-gold);
+    opacity: 0.75;
+  }
+
+  .site-footer__disciplines {
+    color: var(--footer-gold);
+  }
+
+  /* --- Center zone ----------------------------------------------------- */
+  /* `rule — copyright — rule`: the rules are identical thin hairlines on both
+     sides of the legal line. */
+  .site-footer__legal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 1.2vw, 1rem);
+    min-width: 0;
+  }
+
+  .site-footer__rule {
+    flex: none;
+    width: clamp(0.875rem, 3vw, 1.5rem);
+    height: 1px;
+    background: var(--footer-line);
+  }
+
+  .site-footer__copyright {
+    margin: 0;
+    color: var(--footer-muted);
+    font-size: 0.8125rem;
+    text-align: center;
+    /* The legal line must never split across two lines while the three-column
+       layout is active. The grid stacks *before* it could ever wrap (see the
+       media query below, which also resets this to `normal`), so `nowrap` here
+       is safe: the centre cell is never asked to fit less than its content. */
+    white-space: nowrap;
+  }
+
+  /* --- Right zone ------------------------------------------------------ */
   .site-footer__meta {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
     align-items: center;
-    gap: 0.5rem 1.25rem;
+    justify-self: end;
+    min-width: 0;
   }
 
   .site-footer__links {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem 1.25rem;
+    justify-content: flex-end;
+    gap: 0.5rem 1.1rem;
+  }
+
+  /* Thin vertical divider between the two social links. */
+  .site-footer__divider {
+    align-self: center;
+    width: 1px;
+    height: 1em;
+    background: var(--footer-line);
   }
 
   .site-footer__links a {
-    color: var(--ink);
-    font-size: var(--text-small);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.2em;
+    color: var(--footer-gold);
+    font-size: 0.8125rem;
     font-weight: 500;
     text-decoration: none;
     transition: color 0.15s ease;
   }
 
+  /* Hover: the dive's luminous core — reads clearly on the floor (11.9:1). */
   .site-footer__links a:hover {
     color: var(--spark);
+  }
+
+  .site-footer__arrow {
+    font-size: 0.85em;
+    color: var(--footer-muted);
+    transition:
+      transform 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .site-footer__links a:hover .site-footer__arrow {
+    color: var(--spark);
+    transform: translate(2px, -2px);
+  }
+
+  /* --- Responsive ------------------------------------------------------ */
+  /* Stack before the three columns would ever force the legal line to wrap. The
+     ES sign-off is the binding case: its role line maxes at ~303px and the legal
+     line (nowrap copyright + two rules + gaps) at ~403px, so with the row's own
+     gaps (~45px) the three zones need ~1005px of inner width to coexist — the
+     copyright broke in two across the old 720–880px band and would keep doing so
+     up to just below 1024px. Stacking at 1024px therefore guarantees the legal
+     line is always on ONE line when the three-column layout is active, with no
+     overflow anywhere in that range, while `white-space: normal` restores
+     graceful wrapping for the stacked legal line on very small screens. */
+  @media (max-width: 1024px) {
+    .site-footer__row {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      gap: clamp(1.5rem, 6vw, 2.25rem);
+      text-align: center;
+    }
+
+    .site-footer__copyright {
+      white-space: normal;
+    }
+
+    .site-footer__identity {
+      align-items: center;
+    }
+
+    /* In the stacked layout the signature is the only hero-scale mark in the
+       left zone, so the three-column size (which bottoms out at 7rem on phones,
+       ≈112px) reads as tiny. Give it its own width: it scales with the viewport
+       from a comfortable floor up to the SAME 20rem ceiling the three-column
+       layout can reach, so it never outgrows the desktop variant. */
+    .site-footer__signature {
+      width: clamp(12rem, 55vw, 20rem);
+    }
+
+    .site-footer__legal {
+      justify-content: center;
+    }
+
+    .site-footer__meta {
+      justify-self: center;
+    }
+
+    .site-footer__links {
+      justify-content: center;
+    }
   }
 </style>

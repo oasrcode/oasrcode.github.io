@@ -17,9 +17,16 @@ export const prefersReducedMotion = (): boolean =>
   typeof window !== 'undefined' &&
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-export const hasFinePointer = (): boolean =>
-  typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches;
-
-export const isTouchDevice = (): boolean =>
+/**
+ * True only for a device whose primary pointer can hover AND is fine — a mouse
+ * or trackpad.
+ *
+ * `(pointer: fine)` alone is not enough: a hybrid device (touchscreen + mouse)
+ * can report a fine pointer even when its primary input is the touchscreen, so
+ * a touch user would still get the cursor. Requiring `(hover: hover)` too gates
+ * on a pointer that can actually hover; touch-only devices match neither part,
+ * so they get no cursor.
+ */
+export const hasHoverFinePointer = (): boolean =>
   typeof window !== 'undefined' &&
-  ('ontouchstart' in window || (navigator.maxTouchPoints ?? 0) > 0);
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches;

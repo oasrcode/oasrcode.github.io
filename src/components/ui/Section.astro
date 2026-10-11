@@ -12,7 +12,10 @@ const titleId = `${id}-title`;
 
 <section class="section" id={id} aria-labelledby={titleId}>
   <div class="container">
-    <h2 class="section__title" id={titleId} data-wipe data-i18n={i18nKey}>{title}</h2>
+    <header class="section__head">
+      <h2 class="section__title" id={titleId} data-wipe data-i18n={i18nKey}>{title}</h2>
+      <span class="section__rule" aria-hidden="true"></span>
+    </header>
     <slot />
   </div>
 </section>
@@ -20,12 +23,87 @@ const titleId = `${id}-title`;
 <style>
   .section {
     padding-block: var(--section-y);
-    border-top: 1px solid var(--line);
   }
 
-  .section__title {
+  /* Editorial header — the hero's poster language for every section: a display
+     title wrapped in symmetric mono brackets with the hero's short --spark
+     accent bar beneath. The header carries the section-body margin rhythm that
+     used to live on the heading. */
+  .section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 1.5rem;
     margin: 0 0 clamp(1.5rem, 3vw, 2.75rem);
-    font-size: var(--text-h2);
-    font-weight: 800;
+  }
+
+  /* Display family at heavy weight, tight leading, negative tracking and the
+     hero's uppercase treatment. `--text-h1` is the largest existing type token
+     (clamp floor 2.5rem / ceiling 4.25rem), so mobile stays comfortable while
+     desktop lands at the display scale. `min-width: 0` lets a long uppercase
+     word shrink/break rather than force horizontal overflow.
+
+     Submerged treatment: the ink takes a faint cool cast and a soft, layered
+     glow, so the letters read as lit from above and diffusing into the water —
+     a tight luminous core (--spark) inside a wider cooler halo (--glow). Alphas
+     stay low; against the darkening column the same heading simply reads as
+     deeper-set light, with no per-section banding. All values are inherited
+     from the dive scope; outside it the fallback keeps the glow neutral. */
+  .section__title {
+    min-width: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-h1);
+    font-weight: 900;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    overflow-wrap: break-word;
+    color: color-mix(in srgb, var(--ink) 92%, var(--spark));
+    text-shadow:
+      0 0 0.05em color-mix(in srgb, var(--spark) 26%, transparent),
+      0 0.06em 0.6em color-mix(in srgb, var(--glow, var(--spark)) 16%, transparent),
+      0 0.16em 1.4em color-mix(in srgb, var(--glow, var(--spark)) 9%, transparent);
+  }
+
+  /* Brackets are CSS-generated pseudo-elements: they sit outside the text node,
+     so the i18n client's textContent swap leaves them intact, and they ride
+     along with the `data-wipe` clip-path reveal. Symmetric '[ ' / ' ]' matches
+     the hero's mono markers. Decorative only — a few AT (Chromium-based) may
+     still announce generated content. */
+  .section__title::before {
+    content: '[ ';
+  }
+
+  .section__title::after {
+    content: ' ]';
+  }
+
+  /* The hero's short accent bar. `flex-basis: 100%` breaks it onto its own line
+     beneath the title row; the visible bar is painted short by `::before` so it
+     reads as an accent, not a full-width rule. */
+  .section__rule {
+    flex-basis: 100%;
+    margin-top: clamp(0.75rem, 1.6vw, 1.15rem);
+    height: 2px;
+  }
+
+  .section__rule::before {
+    content: '';
+    display: block;
+    width: clamp(2.5rem, 8vw, 5rem);
+    height: 100%;
+    /* A short light streak: a pale core cooling into the --glow halo at the
+       far end, wrapped in a soft two-layer bloom so the bar reads as emitted
+       light rather than a painted rule. */
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--spark) 88%, #fff),
+      var(--spark) 55%,
+      color-mix(in srgb, var(--glow, var(--spark)) 70%, var(--spark))
+    );
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 0 6px 0 color-mix(in srgb, var(--spark) 55%, transparent),
+      0 0 16px 2px color-mix(in srgb, var(--glow, var(--spark)) 30%, transparent);
   }
 </style>
